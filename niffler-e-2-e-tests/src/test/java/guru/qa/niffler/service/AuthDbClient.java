@@ -18,7 +18,6 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.impl.hibernate.AuthAuthorityRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.hibernate.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.spring.AuthAuthorityRepositorySpringJdbc;
-import guru.qa.niffler.data.repository.impl.spring.AuthUserRepositorySpringJdbc;
 import guru.qa.niffler.data.tpl.DataSources;
 import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
@@ -34,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 public class AuthDbClient {
 
@@ -42,17 +41,12 @@ public class AuthDbClient {
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private final AuthUserRepository authUserRepository = new AuthUserRepositoryHibernate();
-    private final AuthAuthorityRepository authAuthorityRepository = new AuthAuthorityRepositoryHibernate();
     private final AuthUserDao authUserSpringDao = new AuthUserDaoSpringJdbc();
     private final AuthAuthorityDao authorityDao = new AuthAuthorityDaoJdbc();
     private final AuthAuthorityDao authoritySpringDao = new AuthAuthorityDaoSpringJdbc();
     private final AuthAuthorityRepository authorityRepository = new AuthAuthorityRepositorySpringJdbc();
     private final UserdataUserDao userdataUserDao = new UserdataUserDaoJdbc();
     private final UserdataUserDao userdataUserSpringDao = new UserdataUserDaoSpringJdbc();
-
-    private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(
-            CFG.authJdbcUrl()
-    );
 
     private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.authJdbcUrl(),
@@ -107,18 +101,20 @@ public class AuthDbClient {
     }
 
     public AuthUserJson createUser(AuthUserJson json) {
-        List<AuthorityEntity> authorities = Stream.of(
-                new AuthorityEntity(Authority.write, AuthUserEntity.fromJson(json)),
-                new AuthorityEntity(Authority.read, AuthUserEntity.fromJson(json))
-        ).toList();
+        AuthUserEntity userEntity = AuthUserEntity.fromJson(json);
         return xaTransactionTemplate.execute(() -> {
-                    AuthUserEntity ue = AuthUserEntity.fromJson(json);
-                    ue.setPassword(pe.encode(json.password()));
-                    AuthUserJson.fromEntity(authUserRepository.create(ue));
-                    for (AuthorityEntity authority : authorities) {
-                        authAuthorityRepository.create(authority);
-                    }
-                    return AuthUserJson.fromEntity(ue);
+                    List<AuthorityEntity> authorities = Arrays.stream(Authority.values())
+                            .map(authority -> {
+                                AuthorityEntity ae = new AuthorityEntity();
+                                ae.setAuthority(authority);
+                                ae.setUser(userEntity);
+                                return ae;
+                            })
+                            .collect(Collectors.toList());
+                    userEntity.setAuthorities(authorities);
+                    authUserRepository.create(userEntity);
+
+                    return AuthUserJson.fromEntity(userEntity);
                 }
         );
     }

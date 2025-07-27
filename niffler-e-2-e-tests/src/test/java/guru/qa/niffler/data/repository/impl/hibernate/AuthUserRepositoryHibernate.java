@@ -46,7 +46,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
 
     @Override
     public List<AuthUserEntity> findAll() {
-        return entityManager.createQuery("select u from AuthUserEntity", AuthUserEntity.class)
+        return entityManager.createQuery("select u from AuthUserEntity u", AuthUserEntity.class)
                 .getResultList();
     }
 

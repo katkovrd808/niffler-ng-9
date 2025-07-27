@@ -5,7 +5,6 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.data.repository.impl.hibernate.SpendRepositoryHibernate;
-import guru.qa.niffler.data.tpl.JdbcTransactionTemplate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
@@ -19,28 +18,20 @@ public class SpendDbClient {
 
     private final SpendRepository spendRepository = new SpendRepositoryHibernate();
 
-    private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(
+    private final XaTransactionTemplate xaTransactionTemplate = new XaTransactionTemplate(
             CFG.spendJdbcUrl()
     );
 
-    private final XaTransactionTemplate xaTxTemplate = new XaTransactionTemplate(CFG.spendJdbcUrl());
-
     public SpendJson createSpend(SpendJson spend) {
-        return jdbcTxTemplate.execute(() -> {
-                    SpendEntity spendEntity = SpendEntity.fromJson(spend);
-                    if (spendEntity.getCategory().getId() == null) {
-                        CategoryEntity categoryEntity = spendRepository.createCategory(spendEntity.getCategory());
-                        spendEntity.setCategory(categoryEntity);
-                    }
-                    return SpendJson.fromEntity(
-                            spendRepository.createSpend(spendEntity)
-                    );
+        SpendEntity spendEntity = SpendEntity.fromJson(spend);
+        return xaTransactionTemplate.execute(() -> {
+                    return SpendJson.fromEntity(spendRepository.createSpend(spendEntity));
                 }
         );
     }
 
     public SpendJson updateSpend(SpendJson spend) {
-        return jdbcTxTemplate.execute(() -> {
+        return xaTransactionTemplate.execute(() -> {
                     SpendEntity se = SpendEntity.fromJson(spend);
                     return SpendJson.fromEntity(
                             spendRepository.update(se)
@@ -50,11 +41,9 @@ public class SpendDbClient {
     }
 
     public CategoryJson createCategory(CategoryJson category) {
-        return jdbcTxTemplate.execute(() -> {
-                    CategoryEntity ce = CategoryEntity.fromJson(category);
-                    return CategoryJson.fromEntity(
-                            spendRepository.createCategory(ce)
-                    );
+        CategoryEntity ce = CategoryEntity.fromJson(category);
+        return xaTransactionTemplate.execute(() -> {
+                    return CategoryJson.fromEntity(spendRepository.createCategory(ce));
                 }
         );
     }
@@ -80,7 +69,7 @@ public class SpendDbClient {
     }
 
     public void deleteSpend(SpendJson spend) {
-        jdbcTxTemplate.execute(() -> {
+        xaTransactionTemplate.execute(() -> {
                     SpendEntity se = SpendEntity.fromJson(spend);
                     spendRepository.delete(se);
                     return null;
@@ -89,7 +78,7 @@ public class SpendDbClient {
     }
 
     public void deleteCategory(CategoryJson category) {
-        jdbcTxTemplate.execute(() -> {
+        xaTransactionTemplate.execute(() -> {
                     CategoryEntity ce = CategoryEntity.fromJson(category);
                     spendRepository.deleteCategory(ce);
                     return null;
