@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UsersClient {
-    UdUserJson create(UdUserJson user);
+    UdUserJson create(String username, String password);
 
     Optional<UdUserJson> findById(UUID id);
 
@@ -17,9 +17,9 @@ public interface UsersClient {
 
     UdUserJson update(UdUserJson user);
 
-    void sendInvitation(UdUserJson requester, UdUserJson addressee);
+    List<UdUserJson> sendInvitation(UdUserJson targetUser, int count);
 
-    void addFriend(UdUserJson requester, UdUserJson addressee);
+    List<UdUserJson> addFriend(UdUserJson targetUser, int count);
 
     void delete(UdUserJson user);
 }
