@@ -2,6 +2,7 @@ package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.model.spend.CategoryJson;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +19,8 @@ public interface SpendRepository {
     Optional<CategoryEntity> findCategoryByUsernameAndSpendName(String username, String name);
 
     Optional<SpendEntity> findById(UUID id);
+
+    CategoryEntity updateCategory(CategoryEntity category);
 
     Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description);
 

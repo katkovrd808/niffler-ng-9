@@ -76,6 +76,12 @@ public class SpendDbClient implements SpendClient{
     }
 
     @Override
+    public CategoryJson editCategory(CategoryJson category) {
+        CategoryEntity ce = CategoryEntity.fromJson(category);
+        return CategoryJson.fromEntity(spendRepository.updateCategory(ce));
+    }
+
+    @Override
     public void delete(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
                     SpendEntity se = SpendEntity.fromJson(spend);

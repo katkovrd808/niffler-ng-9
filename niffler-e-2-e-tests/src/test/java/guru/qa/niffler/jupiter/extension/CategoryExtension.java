@@ -29,17 +29,18 @@ public class CategoryExtension implements BeforeEachCallback, AfterTestExecution
                 .ifPresent(userAnno -> {
                     if (ArrayUtils.isNotEmpty(userAnno.categories())) {
                         final @Nullable UdUserJson createdUser = UserExtension.createdUser();
+                        final String username = createdUser != null ? createdUser.username() : userAnno.username();
 
                         final List<CategoryJson> result = new ArrayList<>();
                         for (Category categoryAnno : userAnno.categories()) {
                             CategoryJson category = new CategoryJson(
                                     null,
                                     randomCategoryName(),
-                                    userAnno.username(),
+                                    username,
                                     categoryAnno.archived()
                             );
 
-                            CategoryJson created = spendApiClient.addCategory(category);
+                            CategoryJson created = spendApiClient.createCategory(category);
                             if (categoryAnno.archived()) {
                                 CategoryJson archivedCategory = new CategoryJson(
                                         created.id(),

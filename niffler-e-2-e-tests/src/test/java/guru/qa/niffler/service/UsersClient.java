@@ -17,7 +17,7 @@ public interface UsersClient {
 
     UdUserJson update(UdUserJson user);
 
-    List<UdUserJson> sendInvitation(UdUserJson targetUser, int count);
+    List<UdUserJson> addInvitation(UdUserJson targetUser, int count);
 
     List<UdUserJson> addFriend(UdUserJson targetUser, int count);
 

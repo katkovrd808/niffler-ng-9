@@ -74,7 +74,7 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public List<UdUserJson> sendInvitation(UdUserJson targetUser, int count) {
+    public List<UdUserJson> addInvitation(UdUserJson targetUser, int count) {
         final List<UdUserJson> result = new ArrayList<>();
         if (count > 0) {
             UdUserEntity targetEntity = userdataUserRepository.findById(
@@ -113,7 +113,7 @@ public class UsersDbClient implements UsersClient {
                             AuthUserEntity authUser = authUserEntity(username, "12345");
                             authUserRepository.create(authUser);
                             UdUserEntity adressee = userdataUserRepository.create(userEntity(username));
-                            userdataUserRepository.sendInvitation(adressee, targetEntity);
+                            userdataUserRepository.addFriend(adressee, targetEntity);
                             result.add(UdUserJson.fromEntity(
                                     adressee,
                                     FriendshipStatus.ACCEPTED
