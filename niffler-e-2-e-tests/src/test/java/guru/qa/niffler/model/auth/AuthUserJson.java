@@ -13,8 +13,7 @@ public record AuthUserJson(
     Boolean enabled,
     Boolean accountNonExpired,
     Boolean accountNonLocked,
-    Boolean credentialsNonExpired,
-    List<AuthorityEntity> authorities) {
+    Boolean credentialsNonExpired) {
 
   public static AuthUserJson fromEntity(AuthUserEntity entity) {
     return new AuthUserJson(
@@ -24,8 +23,7 @@ public record AuthUserJson(
         entity.getEnabled(),
         entity.getAccountNonExpired(),
         entity.getAccountNonLocked(),
-        entity.getCredentialsNonExpired(),
-        entity.getAuthorities()
+        entity.getCredentialsNonExpired()
     );
   }
 }
