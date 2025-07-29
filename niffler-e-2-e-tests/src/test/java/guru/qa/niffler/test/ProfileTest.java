@@ -5,6 +5,7 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,40 +16,38 @@ public class ProfileTest {
 
     private static final Config CFG = Config.getInstance();
 
+    @Test
+    @DisabledByIssue("3")
+    @DisplayName("Archived category should be present in categories list on profile page")
     @User(
-            username = "test1",
             categories = @Category(
                     archived = true
             )
     )
-    @Test
-    @DisabledByIssue("3")
-    @DisplayName("Archived category should be present in categories list on profile page")
-    void archivedCategoryShouldPresentInCategoriesList(CategoryJson categoryJson){
+    void archivedCategoryShouldPresentInCategoriesList(UdUserJson user) {
         open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage("test1", "secret")
+                .fillLoginPage(user.username(), user.testData().password())
                 .submit()
                 .checkThatPageLoaded()
                 .openProfilePageFromHeader()
                 .showArchivedCategories()
-                .checkArchivedCategory(categoryJson.name());
+                .checkArchivedCategory(user.testData().categories().getFirst().name());
     }
 
     @User(
-            username = "test1",
             categories = @Category(
                     archived = false
             )
     )
     @Test
     @DisplayName("Active category should be present in categories list on profile page")
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson categoryJson){
+    void activeCategoryShouldPresentInCategoriesList(UdUserJson user) {
         open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage("test1", "secret")
+                .fillLoginPage(user.username(), user.testData().password())
                 .submit()
                 .checkThatPageLoaded()
                 .openProfilePageFromHeader()
-                .checkCategory(categoryJson.name());
+                .checkCategory(user.testData().categories().getFirst().name());
     }
 
 }

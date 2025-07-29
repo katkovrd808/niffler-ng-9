@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -119,8 +120,8 @@ public class UdUserEntity implements Serializable {
     ue.setFullname(json.fullname());
     ue.setFirstname(json.firstname());
     ue.setSurname(json.surname());
-    ue.setPhoto(json.photo());
-    ue.setPhotoSmall(json.photoSmall());
+    ue.setPhoto(json.photo() != null ? json.photo().getBytes(StandardCharsets.UTF_8) : null);
+    ue.setPhotoSmall(json.photoSmall() != null ? json.photoSmall().getBytes(StandardCharsets.UTF_8) : null);
     return ue;
   }
 

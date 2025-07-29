@@ -2,6 +2,8 @@ package guru.qa.niffler.test;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -67,12 +69,15 @@ public class RegistrationTest {
                 .checkThatPageLoaded();
     }
 
-    //TODO registration of user before test
     @Test
     @DisplayName("User with taken username should be not registered")
-    @Disabled
-    void userShouldBeNotRegisteredIfUsernameAlreadyTaken(){
-
+    @User()
+    void userShouldBeNotRegisteredIfUsernameAlreadyTaken(UdUserJson user){
+        open(CFG.frontUrl(), LoginPage.class)
+                .openRegistrationForm()
+                .fillRegistrationForm(user.username(), "12345", "12345")
+                .completeRegistrationAndCheckFormError(String.format("Username `%s` already exists"
+                        , user.username()));
     }
 
     @Test

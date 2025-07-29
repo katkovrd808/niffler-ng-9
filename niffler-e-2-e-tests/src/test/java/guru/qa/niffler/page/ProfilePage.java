@@ -57,6 +57,7 @@ public class ProfilePage {
     }
 
     public ProfilePage checkArchivedCategory(String categoryName){
+
         categoriesForm.$$("div").find(text(categoryName))
                 .should(visible);
         return this;
