@@ -5,12 +5,14 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
-import guru.qa.niffler.data.tpl.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,10 +21,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
 
   private static final Config CFG = Config.getInstance();
 
+  @Nonnull
   @Override
   public AuthUserEntity create(AuthUserEntity user) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
@@ -67,6 +71,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     return user;
   }
 
+  @Nonnull
   @Override
   public Optional<AuthUserEntity> findById(UUID id) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
@@ -121,6 +126,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     );
   }
 
+  @Nonnull
   @Override
   public Optional<AuthUserEntity> findByUsername(String username) {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
@@ -175,54 +181,55 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     );
   }
 
+  @Nonnull
   @Override
   public List<AuthUserEntity> findAll() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
-    return jdbcTemplate.query(
-        """
-            SELECT
-            u.id AS user_id,
-            u.username,
-            u.password,
-            u.enabled,
-            u.account_non_expired,
-            u.account_non_locked,
-            u.credentials_non_expired,
-            a.id AS authority_id,
-            a.authority
-            FROM "user" u
-            JOIN authority a ON u.id = a.user_id
-            """,
-        (ResultSet rs) -> {
-          Map<UUID, AuthUserEntity> userMap = new ConcurrentHashMap<>();
-          while (rs.next()) {
-            UUID userId = rs.getObject("user_id", UUID.class);
-            AuthUserEntity user = userMap.computeIfAbsent(
-                userId, key -> {
-                  try {
-                    AuthUserEntity ue = new AuthUserEntity();
-                    ue.setId(key);
-                    ue.setUsername(rs.getString("username"));
-                    ue.setPassword(rs.getString("password"));
-                    ue.setEnabled(rs.getBoolean("enabled"));
-                    ue.setAccountNonExpired(rs.getBoolean("account_non_expired"));
-                    ue.setAccountNonLocked(rs.getBoolean("account_non_locked"));
-                    ue.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
-                    return ue;
-                  } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                  }
-                });
+    return Objects.requireNonNull(jdbcTemplate.query(
+      """
+        SELECT
+        u.id AS user_id,
+        u.username,
+        u.password,
+        u.enabled,
+        u.account_non_expired,
+        u.account_non_locked,
+        u.credentials_non_expired,
+        a.id AS authority_id,
+        a.authority
+        FROM "user" u
+        JOIN authority a ON u.id = a.user_id
+        """,
+      (ResultSet rs) -> {
+        Map<UUID, AuthUserEntity> userMap = new ConcurrentHashMap<>();
+        while (rs.next()) {
+          UUID userId = rs.getObject("user_id", UUID.class);
+          AuthUserEntity user = userMap.computeIfAbsent(
+            userId, key -> {
+              try {
+                AuthUserEntity ue = new AuthUserEntity();
+                ue.setId(key);
+                ue.setUsername(rs.getString("username"));
+                ue.setPassword(rs.getString("password"));
+                ue.setEnabled(rs.getBoolean("enabled"));
+                ue.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+                ue.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+                ue.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+                return ue;
+              } catch (SQLException e) {
+                throw new RuntimeException(e);
+              }
+            });
 
-            AuthorityEntity authority = new AuthorityEntity();
-            authority.setId(rs.getObject("authority_id", UUID.class));
-            authority.setUser(user);
-            authority.setAuthority(Authority.valueOf(rs.getString("authority")));
-            user.getAuthorities().add(authority);
-          }
-          return new ArrayList<>(userMap.values());
+          AuthorityEntity authority = new AuthorityEntity();
+          authority.setId(rs.getObject("authority_id", UUID.class));
+          authority.setUser(user);
+          authority.setAuthority(Authority.valueOf(rs.getString("authority")));
+          user.getAuthorities().add(authority);
         }
-    );
+        return new ArrayList<>(userMap.values());
+      }
+    ));
 
   }
 

@@ -9,11 +9,13 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendDbClient implements SpendClient{
-
     private static final Config CFG = Config.getInstance();
 
     private final SpendRepository spendRepository = new SpendRepositoryHibernate();
@@ -92,7 +94,7 @@ public class SpendDbClient implements SpendClient{
     }
 
     @Override
-    public void deleteCategory(CategoryJson category) {
+    public @Nonnull void deleteCategory(CategoryJson category) {
         xaTransactionTemplate.execute(() -> {
                     CategoryEntity ce = CategoryEntity.fromJson(category);
                     spendRepository.deleteCategory(ce);

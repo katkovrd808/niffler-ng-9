@@ -10,6 +10,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient implements SpendClient {
 
     private static final Config CFG = Config.getInstance();
@@ -35,6 +38,7 @@ public class SpendApiClient implements SpendClient {
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
+    @Nonnull
     @Override
     public SpendJson createSpend(SpendJson spendJson) {
         final Response<SpendJson> response;
@@ -48,6 +52,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
+    @Nonnull
     @Override
     public SpendJson update(SpendJson spendJson) {
         final Response<SpendJson> response;
@@ -61,6 +66,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
+    @Nonnull
     @Override
     public Optional<SpendJson> findById(UUID id) {
         final Response<SpendJson> response;
@@ -78,11 +84,13 @@ public class SpendApiClient implements SpendClient {
         }
     }
 
+    @Nonnull
     @Override
     public final Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description) {
         throw new RuntimeException("Unsupported action with Spend API");
     }
 
+    @Nonnull
     @Override
     public CategoryJson editCategory(CategoryJson category) {
         final Response<CategoryJson> response;
@@ -114,6 +122,7 @@ public class SpendApiClient implements SpendClient {
         throw new RuntimeException("Unsupported action with Spend API");
     }
 
+    @Nonnull
     @Override
     public CategoryJson createCategory(CategoryJson categoryJson) {
         final Response<CategoryJson> response;
@@ -127,6 +136,7 @@ public class SpendApiClient implements SpendClient {
         return response.body();
     }
 
+    @Nonnull
     @Override
     public Optional<CategoryJson> findCategoryById(UUID id) {
         final Response<List<CategoryJson>> response;

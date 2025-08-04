@@ -8,6 +8,8 @@ import guru.qa.niffler.data.mapper.userdata.UserdataUserEntityRowMapper;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +18,16 @@ import java.util.UUID;
 
 import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.ACCEPTED;
 import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.PENDING;
-import static guru.qa.niffler.data.tpl.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
   private static final Config CFG = Config.getInstance();
 
   private final AuthUserRepository userRepository = new AuthUserRepositoryJdbc();
 
+  @Nonnull
   @Override
   public UdUserEntity create(UdUserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -56,6 +60,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
   }
 
+  @Nonnull
   @Override
   public Optional<UdUserEntity> findById(UUID id) {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -100,6 +105,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
   }
 
+  @Nonnull
   @Override
   public List<UdUserEntity> findAll() {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -144,6 +150,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
   }
 
+  @Nonnull
   @Override
   public Optional<UdUserEntity> findByUsername(String username) {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -200,6 +207,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
   }
 
+  @Nonnull
   @Override
   public UdUserEntity update(UdUserEntity user) {
     try (PreparedStatement usersPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
@@ -280,6 +288,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
   }
 
+  @Nonnull
   private List<FriendshipEntity> loadFriendships(PreparedStatement ps, UUID id, boolean isRequester, UdUserEntity self) throws SQLException {
     ps.setObject(1, id);
     List<FriendshipEntity> feList = new ArrayList<>();

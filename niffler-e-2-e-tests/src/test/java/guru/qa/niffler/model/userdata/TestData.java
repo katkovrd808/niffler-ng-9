@@ -3,8 +3,10 @@ package guru.qa.niffler.model.userdata;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public record TestData(
         String password,
         List<UdUserJson> friends,

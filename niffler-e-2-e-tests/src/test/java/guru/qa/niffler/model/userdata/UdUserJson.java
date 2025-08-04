@@ -6,9 +6,11 @@ import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UdUserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public record UdUserJson(
         @JsonProperty("id")
         UUID id,

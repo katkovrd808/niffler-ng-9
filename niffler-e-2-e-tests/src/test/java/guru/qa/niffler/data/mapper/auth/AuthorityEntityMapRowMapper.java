@@ -5,9 +5,12 @@ import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.MapRowMapper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class AuthorityEntityMapRowMapper implements MapRowMapper<AuthorityEntity> {
 
   public static final AuthorityEntityMapRowMapper instance = new AuthorityEntityMapRowMapper();
@@ -15,6 +18,7 @@ public class AuthorityEntityMapRowMapper implements MapRowMapper<AuthorityEntity
   private AuthorityEntityMapRowMapper() {
   }
 
+  @Nonnull
   @Override
   public AuthorityEntity mapRow(Map<String, Object> row) {
     AuthorityEntity ae = new AuthorityEntity();

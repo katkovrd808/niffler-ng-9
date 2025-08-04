@@ -6,9 +6,11 @@ import guru.qa.niffler.model.spend.SpendJson;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public interface SpendApi {
 
   @POST("internal/spends/add")
