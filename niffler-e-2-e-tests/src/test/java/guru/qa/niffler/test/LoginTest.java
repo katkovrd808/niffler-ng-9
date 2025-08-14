@@ -3,21 +3,20 @@ package guru.qa.niffler.test;
 import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.*;
+import static guru.qa.niffler.utils.RandomDataUtils.*;
 
 public class LoginTest {
-
-  private static final Config CFG = Config.getInstance();
-
-  String username = new Faker().name().username();
+  private static final String FRONT_URL = Config.getInstance().frontUrl();
 
   @Test
   @DisplayName("Main page should be present after successful login")
   void mainPageShouldBeDisplayedAfterSuccessLogin() {
-    open(CFG.frontUrl(), LoginPage.class)
+    open(FRONT_URL, LoginPage.class)
         .fillLoginPage("duck", "12345")
         .submit()
         .checkThatPageLoaded();
@@ -28,8 +27,8 @@ public class LoginTest {
   void errorShouldBeShownIfUserNotRegistered(){
     final String errorText = "Неверные учетные данные пользователя";
 
-    open(CFG.frontUrl(), LoginPage.class)
-            .fillLoginPage(username, "12345")
+    open(FRONT_URL, LoginPage.class)
+            .fillLoginPage(randomUsername(), "12345")
             .submitAndCheckErrorText(errorText);
   }
 
@@ -38,7 +37,7 @@ public class LoginTest {
   void errorShouldBeShownWithIncorrectRegisteredUserPassword(){
     final String errorText = "Неверные учетные данные пользователя";
 
-    open(CFG.frontUrl(), LoginPage.class)
+    open(FRONT_URL, LoginPage.class)
             .fillLoginPage("test1", new Faker().internet().password())
             .submitAndCheckErrorText(errorText);
   }
@@ -46,8 +45,8 @@ public class LoginTest {
   @Test
   @DisplayName("Password should be visible after changing visibility")
   void passwordShouldBeShownAfterVisibilityChanging(){
-    open(CFG.frontUrl(), LoginPage.class)
-            .fillLoginPage(username, "12345")
+    open(FRONT_URL, LoginPage.class)
+            .fillLoginPage(randomUsername(), "12345")
             .showPassword()
             .checkPasswordInputType();
   }
