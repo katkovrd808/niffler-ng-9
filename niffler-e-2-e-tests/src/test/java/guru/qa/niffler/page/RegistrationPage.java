@@ -11,7 +11,8 @@ public class RegistrationPage {
         passwordInput = $("#password"),
         passwordSubmitInput = $("#passwordSubmit"),
         registrationForm = $("#register-form"),
-        signupBtn = $("#register-button");
+        signupBtn = $("#register-button"),
+        formError = $(".form__error");
 
     public RegistrationPage fillRegistrationForm(String username, String password, String submittedPassword){
         usernameInput.val(username);
@@ -29,6 +30,12 @@ public class RegistrationPage {
         signupBtn.click();
         registrationForm.$$("label").find(text("Username"))
                 .$("span").shouldHave(text(error));
+        return this;
+    }
+
+    public RegistrationPage completeRegistrationAndCheckFormError(String errorText) {
+        signupBtn.click();
+        formError.shouldHave(text(errorText));
         return this;
     }
 

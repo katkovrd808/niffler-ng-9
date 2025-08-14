@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface SpendApi {
 
@@ -17,13 +18,13 @@ public interface SpendApi {
   Call<SpendJson> editSpending(@Body SpendJson spending);
 
   @GET("internal/spends/{id}")
-  Call<SpendJson> getSpendingById(@Path("id") String spendingId);
+  Call<SpendJson> getSpendingById(@Path("id") UUID spendingId);
 
   @GET("internal/spends/all")
   Call<List<SpendJson>> getSpendingList(@Query("filterCurrency")CurrencyValues currency);
 
   @DELETE("internal/spends/remove")
-  Call<Void> deleteSpending(@Query("ids") List<String> ids);
+  Call<Void> deleteSpendings(@Query("ids") List<UUID> ids);
 
   @POST("internal/categories/add")
   Call<CategoryJson> addCategory(@Body CategoryJson category);
