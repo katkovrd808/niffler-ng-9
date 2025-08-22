@@ -51,7 +51,7 @@ public class SpendApiClient implements SpendClient {
         assertEquals(201, response.code());
         return response.body();
     }
-
+  
     @Nonnull
     @Override
     public SpendJson update(SpendJson spendJson) {
@@ -91,6 +91,11 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Nonnull
+    @Override
+    public final Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description) {
+        throw new RuntimeException("Unsupported action with Spend API");
+    }
+
     @Override
     public CategoryJson editCategory(CategoryJson category) {
         final Response<CategoryJson> response;
