@@ -7,16 +7,20 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class AuthUserRepositoryHibernate implements AuthUserRepository {
 
     private static final Config CFG = Config.getInstance();
 
     private final EntityManager entityManager = EntityManagers.em(CFG.authJdbcUrl());
 
+    @Nonnull
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
         entityManager.joinTransaction();
@@ -24,6 +28,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
         return user;
     }
 
+    @Nonnull
     @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         return Optional.ofNullable(
@@ -31,6 +36,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
         );
     }
 
+    @Nonnull
     @Override
     public Optional<AuthUserEntity> findByUsername(String username) {
         try {
@@ -44,6 +50,7 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
         }
     }
 
+    @Nonnull
     @Override
     public List<AuthUserEntity> findAll() {
         return entityManager.createQuery("select u from AuthUserEntity u", AuthUserEntity.class)

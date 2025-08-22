@@ -5,10 +5,13 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.mapper.MapRowMapper;
 import guru.qa.niffler.model.CurrencyValues;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Date;
 import java.util.Map;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class SpendEntityMapRowMapper implements MapRowMapper<SpendEntity> {
 
   public static final SpendEntityMapRowMapper instance = new SpendEntityMapRowMapper();
@@ -16,6 +19,7 @@ public class SpendEntityMapRowMapper implements MapRowMapper<SpendEntity> {
   private SpendEntityMapRowMapper() {
   }
 
+  @Nonnull
   @Override
   public SpendEntity mapRow(Map row) {
     SpendEntity se = new SpendEntity();

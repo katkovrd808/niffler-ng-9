@@ -3,8 +3,10 @@ package guru.qa.niffler.model.auth;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public record AuthorityJson(
     UUID id,
     UUID userId,

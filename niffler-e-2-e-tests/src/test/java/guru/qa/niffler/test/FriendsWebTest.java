@@ -13,61 +13,87 @@ import static com.codeborne.selenide.Selenide.open;
 
 @ExtendWith({BrowserExtension.class})
 public class FriendsWebTest {
+  private static final String FRONT_URL = Config.getInstance().frontUrl();
 
-    private static final Config CFG = Config.getInstance();
+  @Test
+  @DisplayName("Friends table should be empty for new user")
+  @User
+  void friendsTableShouldBeEmptyForNewUser(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openFriendsPageFromHeader()
+      .checkThatPageOpen()
+      .checkThatFriendsTableIsEmpty();
+  }
 
-    @Test
-    @DisplayName("Friends table should be empty for new user")
-    @User
-    void friendsTableShouldBeEmptyForNewUser(UdUserJson user) {
-        open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .submit()
-                .openFriendsPageFromHeader()
-                .checkThatPageOpen()
-                .checkThatFriendsTableIsEmpty();
-    }
+  @Test
+  @DisplayName("Friend should be present in friends table")
+  @User(
+    friends = 1
+  )
+  void friendShouldBePresentInFriendsTable(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openFriendsPageFromHeader()
+      .checkThatPageOpen()
+      .findFriend(user.testData().friends().getFirst().username());
+  }
 
-    @Test
-    @DisplayName("Friend should be present in friends table")
-    @User(
-            friends = 1
-    )
-    void friendShouldBePresentInFriendsTable(UdUserJson user) {
-        open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .submit()
-                .openFriendsPageFromHeader()
-                .checkThatPageOpen()
-                .findFriend(user.testData().friends().getFirst().username());
-    }
+  @Test
+  @DisplayName("Income invitation should be present in friends table")
+  @User(
+    incomeInvitations = 1
+  )
+  void incomeInvitationShouldBePresentInFriendsTable(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openFriendsPageFromHeader()
+      .checkThatPageOpen()
+      .checkFriendshipRequest(user.testData().incomeInvitations().getFirst().username());
+  }
 
-    @Test
-    @DisplayName("Income invitation should be present in friends table")
-    @User(
-            incomeInvitations = 1
-    )
-    void incomeInvitationShouldBePresentInFriendsTable(UdUserJson user) {
-        open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .submit()
-                .openFriendsPageFromHeader()
-                .checkThatPageOpen()
-                .checkFriendshipRequest(user.testData().incomeInvitations().getFirst().username());
-    }
+  @Test
+  @DisplayName("Outcome invitation should be present in friends table")
+  @User(
+    outcomeInvitations = 1
+  )
+  void outcomeInvitationShouldBePresentInAllPeopleTable(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openAllPeoplePageFromHeader()
+      .checkThatPageOpen()
+      .findPeopleWithSearchInput(user.testData().outcomeInvitations().getFirst().username());
+  }
 
-    @Test
-    @DisplayName("Outcome invitation should be present in friends table")
-    @User(
-            outcomeInvitations = 1
-    )
-    void outcomeInvitationShouldBePresentInAllPeopleTable(UdUserJson user) {
-        open(CFG.frontUrl(), LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .submit()
-                .openAllPeoplePageFromHeader()
-                .checkThatPageOpen()
-                .findPeopleWithSearchInput(user.testData().outcomeInvitations().getFirst().username());
-    }
+  @Test
+  @DisplayName("Income invitation should be present in friends table")
+  @User(
+    incomeInvitations = 1
+  )
+  void userShouldBeAbleToAcceptFriendshipRequest(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openFriendsPageFromHeader()
+      .checkThatPageOpen()
+      .acceptFriendshipRequest(user.testData().incomeInvitations().getFirst().username());
+  }
 
+  @Test
+  @DisplayName("Income invitation should be present in friends table")
+  @User(
+    incomeInvitations = 1
+  )
+  void userShouldBeAbleToDeclineFriendshipRequest(UdUserJson user) {
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .openFriendsPageFromHeader()
+      .checkThatPageOpen()
+      .declineFriendshipRequest(user.testData().incomeInvitations().getFirst().username());
+  }
 }

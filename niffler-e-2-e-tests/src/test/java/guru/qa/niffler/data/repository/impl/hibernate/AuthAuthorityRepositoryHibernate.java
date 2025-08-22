@@ -6,12 +6,15 @@ import guru.qa.niffler.data.repository.AuthAuthorityRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static guru.qa.niffler.data.jpa.EntityManagers.em;
 
+@ParametersAreNonnullByDefault
 public class AuthAuthorityRepositoryHibernate implements AuthAuthorityRepository {
 
     private static final Config CFG = Config.getInstance();
@@ -26,6 +29,7 @@ public class AuthAuthorityRepositoryHibernate implements AuthAuthorityRepository
         }
     }
 
+    @Nonnull
     @Override
     public List<AuthorityEntity> findByUserId(UUID userId) {
         try {
@@ -37,6 +41,7 @@ public class AuthAuthorityRepositoryHibernate implements AuthAuthorityRepository
         }
     }
 
+    @Nonnull
     @Override
     public List<AuthorityEntity> findAll() {
         try {

@@ -3,9 +3,12 @@ package guru.qa.niffler.data.mapper.auth;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.mapper.MapRowMapper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class AuthUserEntityMapRowMapper<T> implements MapRowMapper<AuthUserEntity> {
 
   public static final AuthUserEntityMapRowMapper instance = new AuthUserEntityMapRowMapper();
@@ -13,6 +16,7 @@ public class AuthUserEntityMapRowMapper<T> implements MapRowMapper<AuthUserEntit
   private AuthUserEntityMapRowMapper() {
   }
 
+  @Nonnull
   @Override
   public AuthUserEntity mapRow(Map<String, Object> row) {
     AuthUserEntity result = new AuthUserEntity();

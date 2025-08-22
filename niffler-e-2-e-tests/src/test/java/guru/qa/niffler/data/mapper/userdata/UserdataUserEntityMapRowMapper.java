@@ -4,9 +4,12 @@ import guru.qa.niffler.data.entity.userdata.UdUserEntity;
 import guru.qa.niffler.data.mapper.MapRowMapper;
 import guru.qa.niffler.model.CurrencyValues;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class UserdataUserEntityMapRowMapper<T> implements MapRowMapper<UdUserEntity> {
 
   public static final UserdataUserEntityMapRowMapper instance = new UserdataUserEntityMapRowMapper();
@@ -14,6 +17,7 @@ public class UserdataUserEntityMapRowMapper<T> implements MapRowMapper<UdUserEnt
   private UserdataUserEntityMapRowMapper(){
   }
 
+  @Nonnull
   @Override
   public UdUserEntity mapRow(Map<String, Object> row) {
     UdUserEntity ue = new UdUserEntity();

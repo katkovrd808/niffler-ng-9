@@ -1,18 +1,25 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.element.AlertElement;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
+@ParametersAreNonnullByDefault
 public class FriendsPage {
+    private final AlertElement alert = new AlertElement();
+
     private final SelenideElement
         pageTab = $("[aria-label='People tabs']"),
         searchInput = $("input[aria-label='search']"),
-        friendsTable = $("#simple-tabpanel-friends table"),
+        requestsTable = $("#requests"),
+        friendsTable = $("#friends"),
+        modal = $("[role='dialog']"),
         nextPageBtn = $("#page-next"),
-        prevPageBtn = $("#page-prev"),
-        alert=$("#root [role='presentation']");
+        prevPageBtn = $("#page-prev");
 
     public FriendsPage checkThatPageOpen(){
         pageTab.$$("a").find(href("/people/friends")).
@@ -28,7 +35,7 @@ public class FriendsPage {
 
     public FriendsPage checkFriendshipRequest(String friendUsername){
         searchInput.val(friendUsername).pressEnter();
-        friendsTable.$$("td").find(text(friendUsername)).shouldBe(visible);
+        requestsTable.$$("td").find(text(friendUsername)).shouldBe(visible);
         return this;
     }
 
@@ -39,16 +46,19 @@ public class FriendsPage {
 
     public FriendsPage acceptFriendshipRequest(String friendUsername){
         searchInput.val(friendUsername).pressEnter();
-        friendsTable.$$("td").find(text(friendUsername))
+        requestsTable.$$("tr").find(text(friendUsername))
                 .$$("button").find(text("Accept")).click();
-        alert.shouldHave(text("Invitation of " + friendUsername + " accepted"));
+        alert.shouldHaveText("Invitation of " + friendUsername + " accepted");
         return this;
     }
 
     public FriendsPage declineFriendshipRequest(String friendUsername){
         searchInput.val(friendUsername).pressEnter();
-        friendsTable.$$("td").find(text(friendUsername))
+        requestsTable.$$("tr").find(text(friendUsername))
                 .$$("button").find(text("Decline")).click();
+        modal.$("h2").shouldHave(text("Decline friendship"));
+        modal.$$("button").find(text("Decline")).click();
+        alert.shouldHaveText("Invitation of " + friendUsername + " is declined");
         return this;
     }
 }

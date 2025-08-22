@@ -3,9 +3,12 @@ package guru.qa.niffler.data.mapper.spend;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.mapper.MapRowMapper;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.UUID;
 
+@ParametersAreNonnullByDefault
 public class CategoryEntityMapRowMapper implements MapRowMapper<CategoryEntity> {
 
   public static final CategoryEntityMapRowMapper instance = new CategoryEntityMapRowMapper();
@@ -13,6 +16,7 @@ public class CategoryEntityMapRowMapper implements MapRowMapper<CategoryEntity> 
   private CategoryEntityMapRowMapper() {
   }
 
+  @Nonnull
   @Override
   public CategoryEntity mapRow(Map row) {
     CategoryEntity ce = new CategoryEntity();
