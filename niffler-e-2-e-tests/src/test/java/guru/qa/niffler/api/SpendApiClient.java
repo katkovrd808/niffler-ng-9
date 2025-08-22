@@ -87,7 +87,7 @@ public class SpendApiClient implements SpendClient {
     @Nonnull
     @Override
     public final Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description) {
-        throw new RuntimeException("Unsupported action with Spend API");
+        throw new UnsupportedOperationException("Unsupported action with Spend API");
     }
 
     @Nonnull
@@ -119,7 +119,7 @@ public class SpendApiClient implements SpendClient {
 
     @Override
     public final void deleteCategory(CategoryJson category) {
-        throw new RuntimeException("Unsupported action with Spend API");
+        throw new UnsupportedOperationException("Unsupported action with Spend API");
     }
 
     @Nonnull
@@ -158,6 +158,6 @@ public class SpendApiClient implements SpendClient {
 
     @Override
     public final Optional<CategoryJson> findCategoryByUsernameAndSpendName(String username, String name) {
-        throw new RuntimeException("Unsupported action with Spend API");
+        throw new UnsupportedOperationException("Unsupported action with Spend API");
     }
 }

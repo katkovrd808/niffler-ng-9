@@ -1,6 +1,8 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.page.element.CalendarElement;
 import guru.qa.niffler.page.element.SpendingTable;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -16,11 +18,22 @@ public class CreateSpendingPage {
   private final CalendarElement calendarElement = new CalendarElement();
 
   private final SelenideElement self = $("form"),
-  amountInput = self.$("#amount"),
-  currencySelector = self.$("#currency"),
-  categoryInput = self.$("#category"),
-  descriptionInput = self.$("#description"),
-  saveBtn = $("#save");
+    amountInput = self.$("#amount"),
+    currencySelector = self.$("#currency"),
+    categoryInput = self.$("#category"),
+    descriptionInput = self.$("#description"),
+    saveBtn = $("#save");
+
+  public SpendingTable createSpending(SpendJson spend, CurrencyValues currency) {
+    amountInput.val(spend.amount().toString());
+    currencySelector.click();
+    $("[role='listbox']").$$("span").find(text(currency.name())).click();
+    categoryInput.val(spend.category().name());
+    calendarElement.selectDateInCalendar(spend.spendDate());
+    descriptionInput.val(spend.description());
+    saveBtn.click();
+    return new SpendingTable();
+  }
 
   public SpendingTable createSpending(String description) {
     amountInput.val("100");

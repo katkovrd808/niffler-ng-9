@@ -9,6 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
+import static guru.qa.niffler.page.element.DateRange.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
@@ -23,20 +24,7 @@ public class SpendingTable {
   public SpendingTable selectPeriod(DateRange period) {
     periodBtn.click();
     final ElementsCollection periodValues = $("[role='listbox']").$$("li");
-    switch (period) {
-      case ALL_TIME:
-        periodValues.find(text("All time")).click();
-        break;
-      case LAST_MONTH:
-        periodValues.find(text("Last month")).click();
-        break;
-      case LAST_WEEK:
-        periodValues.find(text("Last week")).click();
-        break;
-      case TODAY:
-        periodValues.find(text("Today")).click();
-        break;
-    }
+    periodValues.find(text(period.getValue())).click();
     return this;
   }
 
