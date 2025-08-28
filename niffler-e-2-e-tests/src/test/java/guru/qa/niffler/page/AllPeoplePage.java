@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.base.BasePage;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -8,14 +9,13 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class AllPeoplePage {
+public class AllPeoplePage extends BasePage<AllPeoplePage> {
     private final SelenideElement
         pageTab = $("[aria-label='People tabs']"),
         searchInput = $("input[aria-label='search']"),
         peopleTable = $("#simple-tabpanel-all table"),
         nextPageBtn = $("#page-next"),
-        prevPageBtn = $("#page-prev"),
-        alert=$("#root [role='presentation']");
+        prevPageBtn = $("#page-prev");
 
     public AllPeoplePage checkThatPageOpen(){
         pageTab.$$("a").find(href("/people/all")).
@@ -34,7 +34,7 @@ public class AllPeoplePage {
         searchInput.val(username).pressEnter();
         peopleTable.$$("tr").find(text(username))
                 .$$("td").find(text("Add friend")).click();
-        alert.shouldHave(text("Invitation sent to " + username));
+        checkAlert("Invitation sent to " + username);
         return this;
     }
 }

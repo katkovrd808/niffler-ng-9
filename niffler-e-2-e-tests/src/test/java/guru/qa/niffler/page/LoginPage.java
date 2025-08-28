@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.base.BasePage;
 import io.qameta.allure.Step;
 
 import javax.annotation.ParametersAreNonnullByDefault;
