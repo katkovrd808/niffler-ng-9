@@ -38,8 +38,7 @@ public class AuthApiClient extends RestClient implements AuthClient {
       final StopWatch sw = StopWatch.createStarted();
 
       while (sw.getTime(TimeUnit.SECONDS) < 30) {
-        UdUserJson userJson;
-        userJson = userdataApi.currentUser(username);
+        UdUserJson userJson = userdataApi.currentUser(username);
         if (userJson != null && userJson.id() != null) {
           return userJson;
         } else {
