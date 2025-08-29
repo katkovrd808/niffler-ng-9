@@ -1,7 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.element.AlertElement;
+import guru.qa.niffler.page.base.BasePage;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -9,9 +9,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class FriendsPage {
-    private final AlertElement alert = new AlertElement();
-
+public class FriendsPage extends BasePage<FriendsPage> {
     private final SelenideElement
         pageTab = $("[aria-label='People tabs']"),
         searchInput = $("input[aria-label='search']"),
@@ -48,7 +46,7 @@ public class FriendsPage {
         searchInput.val(friendUsername).pressEnter();
         requestsTable.$$("tr").find(text(friendUsername))
                 .$$("button").find(text("Accept")).click();
-        alert.shouldHaveText("Invitation of " + friendUsername + " accepted");
+        checkAlert("Invitation of " + friendUsername + " accepted");
         return this;
     }
 
@@ -58,7 +56,7 @@ public class FriendsPage {
                 .$$("button").find(text("Decline")).click();
         modal.$("h2").shouldHave(text("Decline friendship"));
         modal.$$("button").find(text("Decline")).click();
-        alert.shouldHaveText("Invitation of " + friendUsername + " is declined");
+        checkAlert("Invitation of " + friendUsername + " is declined");
         return this;
     }
 }

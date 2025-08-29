@@ -2,18 +2,23 @@ package guru.qa.niffler.page.element;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.*;
+import guru.qa.niffler.page.base.BaseElement;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class HeaderElement {
+public class HeaderElement extends BaseElement<HeaderElement> {
   private final SelenideElement
-    openProfileBtn = $("header button"),
-    logo = $("header h1"),
-    newSpendingBtn = $$("header a").find(text("New spending")),
+    openProfileBtn = self.$("button"),
+    logo = self.$("h1"),
+    newSpendingBtn = self.$$("a").find(text("New spending")),
     profileMenu = $("[role='menu']");
+
+  public HeaderElement() {
+    super($("header"));
+  }
 
   @Step("Going to Profile page from header")
   public ProfilePage openProfilePageFromHeader() {

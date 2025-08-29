@@ -3,6 +3,7 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.spend.SpendJson;
+import guru.qa.niffler.page.base.BasePage;
 import guru.qa.niffler.page.element.CalendarElement;
 import guru.qa.niffler.page.element.SpendingTable;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -14,7 +15,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class CreateSpendingPage {
+public class CreateSpendingPage extends BasePage<CreateSpendingPage> {
   private final CalendarElement calendarElement = new CalendarElement();
 
   private final SelenideElement self = $("form"),
@@ -32,6 +33,7 @@ public class CreateSpendingPage {
     calendarElement.selectDateInCalendar(spend.spendDate());
     descriptionInput.val(spend.description());
     saveBtn.click();
+    checkAlert("New spending is successfully created");
     return new SpendingTable();
   }
 
@@ -43,6 +45,7 @@ public class CreateSpendingPage {
     calendarElement.selectDateInCalendar(new Date());
     descriptionInput.val(description);
     saveBtn.click();
+    checkAlert("New spending is successfully created");
     return new SpendingTable();
   }
 }

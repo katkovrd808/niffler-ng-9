@@ -4,16 +4,13 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.page.element.AlertElement;
-import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Selenide.*;
-import static guru.qa.niffler.utils.RandomDataUtils.*;
+import static com.codeborne.selenide.Selenide.open;
+import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 
 public class ProfileTest {
   private static final String FRONT_URL = Config.getInstance().frontUrl();

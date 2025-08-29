@@ -1,7 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.element.AlertElement;
+import guru.qa.niffler.page.base.BasePage;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -9,8 +9,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
 @ParametersAreNonnullByDefault
-public class ProfilePage {
-  private final AlertElement alert = new AlertElement();
+public class ProfilePage extends BasePage<ProfilePage> {
 
   private final SelenideElement
     profileInfoForm = $x("//*/main/div/form"),
@@ -26,7 +25,7 @@ public class ProfilePage {
   public ProfilePage setFullName(String name) {
     profileInfoForm.$("#name").val(name);
     saveBtn.click();
-    alert.shouldHaveText("Profile successfully updated");
+    checkAlert("Profile successfully updated");
     return this;
   }
 

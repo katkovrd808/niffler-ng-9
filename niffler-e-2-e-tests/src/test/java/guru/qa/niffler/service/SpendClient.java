@@ -10,6 +10,11 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public interface SpendClient {
+
+    static SpendClient getInstance() {
+        return new SpendDbClient();
+    }
+
     @Nonnull
     SpendJson createSpend(SpendJson spend);
 

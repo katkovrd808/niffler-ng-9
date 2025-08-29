@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class SucceedRegistrationPage {
     private final SelenideElement
         congratulationText = $(".form__paragraph_success"),
-        signinBtn = $(".form_sign-in");
+        loginBtn = $(".form_sign-in");
 
     public SucceedRegistrationPage checkSucceedRegistrationPageTitle(){
         congratulationText.shouldHave(text("Congratulations! You've registered!"));
@@ -16,7 +16,7 @@ public class SucceedRegistrationPage {
     }
 
     public LoginPage loginAfterRegistration(){
-        signinBtn.click();
+        loginBtn.click();
         return new LoginPage();
     }
 }
