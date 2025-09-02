@@ -59,7 +59,7 @@ public class AuthDbClient {
 
     public Optional<AuthUserJson> findByUsername(AuthUserJson json) {
         Optional<AuthUserEntity> ue = authUserRepository.findByUsername(json.username());
-        return ue.map(AuthUserJson::fromEntity);
+      return ue.map(AuthUserJson::fromEntity);
     }
 
     public List<AuthUserEntity> findAll() {

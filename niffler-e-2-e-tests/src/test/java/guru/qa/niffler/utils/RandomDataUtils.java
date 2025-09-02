@@ -13,6 +13,11 @@ public class RandomDataUtils {
     }
 
     @Nonnull
+    public static String randomPassword() {
+        return faker.internet().password();
+    }
+
+    @Nonnull
     public static String randomName(){
         return faker.name().firstName();
     }

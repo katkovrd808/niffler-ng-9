@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType.Type.*;
 
+@Deprecated
 public class UsersQueueExtension implements BeforeEachCallback,
         AfterEachCallback,
         ParameterResolver {
