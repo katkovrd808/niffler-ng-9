@@ -1,17 +1,15 @@
-package guru.qa.niffler.test;
+package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -57,6 +55,7 @@ public class ProfileTest {
 
   @User()
   @Test
+  @DisplayName("User should be able to upload profile image")
   void userShouldBeAbleToUploadProfileImage(UdUserJson user) {
     open(FRONT_URL, LoginPage.class)
       .fillLoginPage(user.username(), user.testData().password())
@@ -68,6 +67,7 @@ public class ProfileTest {
 
   @User()
   @Test
+  @DisplayName("User should be able to change username")
   void userShouldBeNotAbleToChangeUsername(UdUserJson user) {
     open(FRONT_URL, LoginPage.class)
       .fillLoginPage(user.username(), user.testData().password())
@@ -79,6 +79,7 @@ public class ProfileTest {
 
   @User()
   @Test
+  @DisplayName("User should be able to change name")
   void userShouldBeAbleToChangeName(UdUserJson user) {
     final String fullName = randomName();
 

@@ -8,6 +8,7 @@ import retrofit2.Response;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -27,6 +28,19 @@ public class UserdataApiClient extends RestClient implements UserdataClient {
     final Response<UdUserJson> response;
     try {
       response = userdataApi.currentUser(username).execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
+  @Override
+  @Nullable
+  public List<UdUserJson> allUsersExceptCurrent(String username, String searchQuery) {
+    final Response<List<UdUserJson>> response;
+    try {
+      response = userdataApi.allUsers(username, searchQuery).execute();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
