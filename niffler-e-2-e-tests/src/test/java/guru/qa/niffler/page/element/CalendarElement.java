@@ -1,6 +1,5 @@
 package guru.qa.niffler.page.element;
 
-import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.base.BaseElement;
 
 import javax.annotation.ParametersAreNonnullByDefault;

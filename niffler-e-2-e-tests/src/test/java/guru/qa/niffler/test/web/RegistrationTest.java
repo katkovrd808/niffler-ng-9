@@ -1,17 +1,22 @@
-package guru.qa.niffler.test;
+package guru.qa.niffler.test.web;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Selenide.*;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
+@Tags({@Tag("WEB")})
+@ParametersAreNonnullByDefault
 public class RegistrationTest {
   private static final String FRONT_URL = Config.getInstance().frontUrl();
   private final Faker faker = new Faker();
@@ -55,22 +60,23 @@ public class RegistrationTest {
   @Test
   @DisplayName("User can open login page and login to account after registration")
   void userCanMakeLoginAfterRegistration() {
+    final String username = randomUsername();
     final String password = "12345";
 
     open(FRONT_URL, LoginPage.class)
       .openRegistrationForm()
-      .fillRegistrationForm(randomUsername(), password, password)
+      .fillRegistrationForm(username, password, password)
       .submitRegistration()
       .checkSucceedRegistrationPageTitle()
       .loginAfterRegistration()
-      .fillLoginPage(randomUsername(), password)
+      .fillLoginPage(username, password)
       .submit()
       .checkThatPageLoaded();
   }
 
+  @User()
   @Test
   @DisplayName("User with taken username should be not registered")
-  @User()
   void userShouldBeNotRegisteredIfUsernameAlreadyTaken(UdUserJson user) {
     open(FRONT_URL, LoginPage.class)
       .openRegistrationForm()

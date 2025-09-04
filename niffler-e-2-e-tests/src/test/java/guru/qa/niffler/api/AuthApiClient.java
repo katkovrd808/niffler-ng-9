@@ -25,7 +25,7 @@ public class AuthApiClient extends RestClient implements AuthClient {
 
   @Override
   @Nonnull
-  public UdUserJson registerUser(String username, String password) {
+  public UdUserJson createUser(String username, String password) {
     try {
       authApi.requestRegisterForm().execute();
       authApi.register(

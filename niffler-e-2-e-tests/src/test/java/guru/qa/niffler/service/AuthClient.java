@@ -7,6 +7,6 @@ import javax.annotation.Nullable;
 public interface AuthClient {
 
   @Nullable
-  UdUserJson registerUser(String username, String password);
+  UdUserJson createUser(String username, String password);
 
 }
