@@ -1,20 +1,28 @@
 package guru.qa.niffler.test.web;
 
+import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.utils.RandomDataUtils;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.page.element.DateRange.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tags({@Tag("WEB")})
 @ParametersAreNonnullByDefault
@@ -217,5 +225,25 @@ public class SpendingTest {
       .checkThatPageLoaded()
       .spendingTableShouldBeLoaded()
       .checkTableSize(spendings.size());
+  }
+
+  @User(
+    spendings = @Spending(
+      category = "Обучение",
+      description = "Обучение Advanced 2.0",
+      amount = 79990
+    )
+  )
+  @ScreenShotTest("img/expected-stat.png")
+  void checkStatComponentTest(UdUserJson user, BufferedImage expected) throws IOException {
+    Selenide.open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit();
+
+    BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
+    assertFalse(new ScreenDiffResult(
+      expected,
+      actual
+    ));
   }
 }
