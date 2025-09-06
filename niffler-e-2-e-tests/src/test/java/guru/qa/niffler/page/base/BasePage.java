@@ -1,13 +1,15 @@
 package guru.qa.niffler.page.base;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.element.HeaderElement;
 import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
 
 public class BasePage <T extends BasePage<?>>{
 
+  protected final HeaderElement header = new HeaderElement();
   protected final SelenideElement alert = $("#root [role='presentation']");
 
   @SuppressWarnings("unchecked")
@@ -16,5 +18,4 @@ public class BasePage <T extends BasePage<?>>{
     alert.shouldHave(text(text));
     return (T) this;
   }
-
 }

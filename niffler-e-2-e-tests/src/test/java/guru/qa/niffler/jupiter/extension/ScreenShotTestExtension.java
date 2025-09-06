@@ -12,12 +12,16 @@ import org.springframework.core.io.ClassPathResource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Objects;
 
 public class ScreenShotTestExtension implements ParameterResolver, TestExecutionExceptionHandler {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ScreenShotTestExtension.class);
+
+  public static final ExtensionContext.Namespace SCREENSHOT_CONTEXT = ExtensionContext.Namespace.create("SCREENSHOT_TEST");
 
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private static final Base64.Encoder encoder = Base64.getEncoder();
@@ -31,11 +35,14 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   @SneakyThrows
   @Override
   public BufferedImage resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    return ImageIO.read(new ClassPathResource("img/expected-stat.png").getInputStream());
+    String expectedRoot = extensionContext.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).value();
+    return ImageIO.read(new ClassPathResource(expectedRoot).getInputStream());
   }
 
   @Override
-  public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
+  public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable, Exception {
+    boolean overwrite = context.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).rewriteExpected();
+
     ScreenDiff screenDif = new ScreenDiff(
       "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
       "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
@@ -47,6 +54,12 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
       "application/vnd.allure.image.diff",
       objectMapper.writeValueAsString(screenDif)
     );
+
+    if (overwrite) {
+      var overwriteRoot = context.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).value();
+      ImageIO.write(getActual(), "png", new File("src/test/resources", overwriteRoot));
+    }
+
     throw throwable;
   }
 
@@ -55,7 +68,10 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   }
 
   public static BufferedImage getExpected() {
-    return TestMethodContextExtension.context().getStore(NAMESPACE).get("expected", BufferedImage.class);
+    return Objects.requireNonNull(
+      TestMethodContextExtension.context().getStore(NAMESPACE).get("expected", BufferedImage.class),
+      "Expected buffered image was not found in TestMethodContext"
+    );
   }
 
   public static void setActual(BufferedImage actual) {
@@ -63,7 +79,10 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   }
 
   public static BufferedImage getActual() {
-    return TestMethodContextExtension.context().getStore(NAMESPACE).get("actual", BufferedImage.class);
+    return Objects.requireNonNull(
+      TestMethodContextExtension.context().getStore(NAMESPACE).get("actual", BufferedImage.class),
+      "Actual buffered image was not found in TestMethodContext"
+    );
   }
 
   public static void setDiff(BufferedImage diff) {

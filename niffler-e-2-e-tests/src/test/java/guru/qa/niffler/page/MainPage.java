@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.base.BasePage;
 import guru.qa.niffler.page.element.HeaderElement;
 import guru.qa.niffler.page.element.SpendingTable;
 import io.qameta.allure.Step;
@@ -12,15 +13,29 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
   private final SpendingTable spendingTable = new SpendingTable();
   private final HeaderElement headerElement = new HeaderElement();
 
   private final SelenideElement statistics = $("#stat h2");
+  private final SelenideElement legend = $("#legend-container");
 
   @Step("Asserting that main page is loaded")
   public MainPage checkThatPageLoaded() {
     statistics.should(visible);
+    return this;
+  }
+
+  @Step("Deleting spend with description {description}")
+  public MainPage deleteSpending(String description) {
+    spendingTable.deleteSpending(description);
+    return this;
+  }
+
+  @Step("Asserting that ")
+  public MainPage assertArchivedSpendingHasSum(Double sum) {
+    legend.$("ul").$$("li").get(0)
+      .shouldHave(text(String.format("Archived %d ₽", sum.intValue())));
     return this;
   }
 
@@ -30,27 +45,31 @@ public class MainPage {
     return new SpendingTable();
   }
 
-  @Step("Opening edit spend page")
+  @Step("Editing spend with description {description}")
   public EditSpendingPage editSpending(String description) {
     spendingTable.editSpending(description);
     return new EditSpendingPage();
   }
 
+  @Step("Opening Profile page from header")
   public ProfilePage openProfilePageFromHeader() {
     headerElement.openProfilePageFromHeader();
     return new ProfilePage();
   }
 
+  @Step("Opening Friends page from header")
   public FriendsPage openFriendsPageFromHeader() {
     headerElement.openFriendsPageFromHeader();
     return new FriendsPage();
   }
 
+  @Step("Opening All People page from header")
   public AllPeoplePage openAllPeoplePageFromHeader() {
     headerElement.openAllPeoplePageFromHeader();
     return new AllPeoplePage();
   }
 
+  @Step("Opening Create Spend page from header")
   public CreateSpendingPage openCreateSpendingPageFromHeader() {
     headerElement.openCreateSpendPage();
     return new CreateSpendingPage();

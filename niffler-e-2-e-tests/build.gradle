@@ -18,6 +18,7 @@ buildscript {
         wiremockVersion = '3.12.1'
         fakerVersion = '1.0.2'
         ashotVersion = '1.5.4'
+        pioneerVersion = '2.3.0'
         userdataWsdlUrl = System.getProperty("test.env") == "docker"
                 ? "http://userdata.niffler.dc:8089/ws/userdata.wsdl"
                 : "http://127.0.0.1:8089/ws/userdata.wsdl"
@@ -67,6 +68,7 @@ dependencies {
     testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
     // JUnit
     testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
+    testImplementation "org.junit-pioneer:junit-pioneer:${pioneerVersion}"
     // REST
     testImplementation "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
     testImplementation "com.squareup.okhttp3:okhttp-urlconnection:${okhttp3Version}"
