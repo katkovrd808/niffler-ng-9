@@ -21,8 +21,6 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ScreenShotTestExtension.class);
 
-  public static final ExtensionContext.Namespace SCREENSHOT_CONTEXT = ExtensionContext.Namespace.create("SCREENSHOT_TEST");
-
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private static final Base64.Encoder encoder = Base64.getEncoder();
 
