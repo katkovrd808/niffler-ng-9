@@ -12,12 +12,20 @@ import static com.codeborne.selenide.Selenide.$;
 @ParametersAreNonnullByDefault
 public class EditSpendingPage extends BasePage<EditSpendingPage> {
   private final SelenideElement descriptionInput = $("#description");
+  private final SelenideElement priceInput = $("#amount");
   private final SelenideElement submitButton = $("#save");
 
-  @Step("Setting new description for spend")
+  @Step("Setting new description to spend")
   public EditSpendingPage setNewSpendingDescription(String description) {
     descriptionInput.clear();
     descriptionInput.setValue(description);
+    return this;
+  }
+
+  @Step("Setting new price {price} to spend")
+  public EditSpendingPage setNewSpendingPrice(int amount) {
+    priceInput.clear();
+    priceInput.setValue(String.valueOf(amount));
     return this;
   }
 
