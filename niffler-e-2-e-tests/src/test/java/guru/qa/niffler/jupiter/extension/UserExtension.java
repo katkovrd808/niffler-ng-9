@@ -3,16 +3,13 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.service.AuthDbClient;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.UsersDbClient;
-import guru.qa.niffler.utils.RandomDataUtils;
+import guru.qa.niffler.service.impl.UsersApiClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
@@ -22,7 +19,7 @@ public class UserExtension implements BeforeEachCallback, AfterTestExecutionCall
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
   public static final String DEFAULT_PASSWORD = "secret";
 
-  private final UsersClient usersClient = new UsersDbClient();
+  private final UsersClient usersClient = new UsersApiClient();
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
