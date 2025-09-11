@@ -1,7 +1,7 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.UserdataClient;
 import retrofit2.Response;
 
@@ -47,5 +47,32 @@ public class UserdataApiClient extends RestClient implements UserdataClient {
     assertEquals(200, response.code());
     return response.body();
   }
+
+  @Override
+  @Nullable
+  public UdUserJson sendInvitation(String username, String targetUsername) {
+    final Response<UdUserJson> response;
+    try {
+      response = userdataApi.sendInvitation(username, targetUsername).execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
+  @Nullable
+  @Override
+  public UdUserJson acceptInvitation(String targetUsername, String username) {
+    final Response<UdUserJson> response;
+    try {
+      response = userdataApi.acceptFriendship(targetUsername, username).execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
 
 }

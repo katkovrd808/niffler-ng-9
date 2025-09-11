@@ -15,4 +15,9 @@ public interface UserdataClient {
   @Nullable
   List<UdUserJson> allUsersExceptCurrent(String username, String searchQuery);
 
+  @Nullable
+  UdUserJson sendInvitation(String username, String targetUsername);
+
+  @Nullable
+  UdUserJson acceptInvitation(String username, String targetUsername);
 }

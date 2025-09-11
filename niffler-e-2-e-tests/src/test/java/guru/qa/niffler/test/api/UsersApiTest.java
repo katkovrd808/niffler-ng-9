@@ -1,6 +1,6 @@
 package guru.qa.niffler.test.api;
 
-import guru.qa.niffler.api.UserdataApiClient;
+import guru.qa.niffler.service.impl.UserdataApiClient;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.service.UserdataClient;
@@ -17,7 +17,7 @@ public class UsersApiTest {
 
   private final UserdataClient userdataClient = new UserdataApiClient();
 
-  @User()
+  @User
   @Test
   @Order(1)
   @DisplayName("Users table should be empty before all tests execution")
@@ -26,7 +26,7 @@ public class UsersApiTest {
     assertTrue(users.isEmpty());
   }
 
-  @User()
+  @User
   @Test
   @Order(Integer.MAX_VALUE)
   @DisplayName("Users table should be not empty after all tests execution")
