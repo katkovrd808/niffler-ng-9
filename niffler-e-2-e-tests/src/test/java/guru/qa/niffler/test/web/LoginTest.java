@@ -22,7 +22,7 @@ public class LoginTest {
 
   private static final String CREDENTIALS_ERROR_TEXT = "Bad credentials";
 
-  @User()
+  @User
   @Test
   @DisplayName("Main page should be present after successful login")
   void mainPageShouldBeDisplayedAfterSuccessLogin(UdUserJson user) {
@@ -48,7 +48,7 @@ public class LoginTest {
             .submitAndCheckErrorText(CREDENTIALS_ERROR_TEXT);
   }
 
-  @User()
+  @User
   @Test
   @DisplayName("Password should be visible after changing visibility")
   void passwordShouldBeShownAfterVisibilityChanging(UdUserJson user){

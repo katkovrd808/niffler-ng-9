@@ -1,13 +1,12 @@
 package guru.qa.niffler.jupiter.extension;
 
 import com.github.jknack.handlebars.internal.lang3.ArrayUtils;
-import guru.qa.niffler.api.SpendApiClient;
+import guru.qa.niffler.service.impl.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.utils.DateResolverFactory;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -18,7 +17,6 @@ import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;

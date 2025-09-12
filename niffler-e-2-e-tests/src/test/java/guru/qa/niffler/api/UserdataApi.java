@@ -3,6 +3,7 @@ package guru.qa.niffler.api;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 import javax.annotation.Nullable;
@@ -19,4 +20,9 @@ public interface UserdataApi {
   Call<List<UdUserJson>> allUsers(@Query("username") String username,
                                   @Nullable @Query("searchQuery") String searchQuery);
 
+  @POST("internal/invitations/send")
+  Call<UdUserJson> sendInvitation(@Query("username") String username, @Query("targetUsername") String targetUsername);
+
+  @POST("internal/invitations/accept")
+  Call<UdUserJson> acceptFriendship(@Query("username") String username, @Query("targetUsername") String targetUsername);
 }

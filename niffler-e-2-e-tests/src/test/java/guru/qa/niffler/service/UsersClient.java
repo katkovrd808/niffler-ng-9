@@ -1,6 +1,7 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.model.userdata.UdUserJson;
+import guru.qa.niffler.service.impl.UsersDbClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public interface UsersClient {
-
+    //ADD FACTORY LOGIC
     static UsersClient getInstance() {
         return new UsersDbClient();
     }

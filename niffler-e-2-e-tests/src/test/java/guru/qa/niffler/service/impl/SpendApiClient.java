@@ -1,8 +1,9 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
+import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
-import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.service.SpendClient;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient extends RestClient {
+public class SpendApiClient extends RestClient implements SpendClient {
 
   private final SpendApi spendApi;
 

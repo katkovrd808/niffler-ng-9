@@ -8,6 +8,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
+import com.p6spy.engine.spy.P6DataSource;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -36,9 +37,12 @@ public class DataSources {
           props.put("password", "secret");
           dsBean.setXaProperties(props);
           dsBean.setMaxPoolSize(10);
+          P6DataSource p6DataSource = new P6DataSource(
+            dsBean
+          );
             try {
                 InitialContext context = new InitialContext();
-                context.bind("java:comp/env/jdbc/" + uniqueId, dsBean);
+                context.bind("java:comp/env/jdbc/" + uniqueId, p6DataSource);
             } catch (NamingException e) {
                 throw new RuntimeException(e);
             }
