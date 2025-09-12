@@ -12,13 +12,14 @@ public class DatabasesExtension implements SuiteExtension {
     private final DatabaseCleaner dbCleaner = new DatabaseCleaner();
 
     @Override
+    /*@Override
     public void beforeSuite(ExtensionContext context) {
         dbCleaner.cleanDatabase(
           CFG.userdataJdbcUrl(),
           CFG.authJdbcUrl(),
           CFG.spendJdbcUrl()
         );
-    }
+    }*/
 
     @Override
     public void afterSuite() {
