@@ -7,8 +7,6 @@ import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.utils.ActualScreenShot;
-import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -21,7 +19,6 @@ import java.io.IOException;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @Tags({@Tag("WEB")})
 @ParametersAreNonnullByDefault
@@ -111,11 +108,7 @@ public class ProfileTest {
       .submit()
       .checkThatPageLoaded()
       .openProfilePageFromHeader()
-      .uploadProfileImage("img/cat.png");
-
-    assertFalse(new ScreenDiffResult(
-      expected,
-      new ActualScreenShot().makeScreenshot($("form img"))
-    ));
+      .uploadProfileImage("img/cat.png")
+      .assertDiff(expected, $("form img"));
   }
 }

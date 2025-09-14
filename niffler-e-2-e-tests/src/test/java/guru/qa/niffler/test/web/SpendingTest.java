@@ -263,12 +263,8 @@ public class SpendingTest {
       .submit()
       .editSpending(user.testData().spendings().getFirst().description())
       .setNewSpendingPrice(1000)
-      .save();
-
-    assertFalse(new ScreenDiffResult(
-      expected,
-      new ActualScreenShot().makeScreenshot($("canvas[role='img']"))
-    ));
+      .save()
+      .assertDiff(expected, $("canvas[role='img']"));
   }
 
   @User(
@@ -285,12 +281,8 @@ public class SpendingTest {
       .fillLoginPage(user.username(), user.testData().password())
       .submit()
       .deleteSpending(user.testData().spendings().getFirst().description())
-      .checkAlert("Spendings succesfully deleted");
-
-    assertFalse(new ScreenDiffResult(
-      expected,
-      new ActualScreenShot().makeScreenshot($("canvas[role='img']"))
-    ));
+      .checkAlert("Spendings succesfully deleted")
+      .assertDiff(expected, $("canvas[role='img']"));
   }
 
   @User(
@@ -310,11 +302,7 @@ public class SpendingTest {
       .submit()
       .openProfilePageFromHeader()
       .archiveCategoryAndReturn(spending.category().name())
-      .assertArchivedSpendingHasSum(spending.amount());
-
-    assertFalse(new ScreenDiffResult(
-      expected,
-      new ActualScreenShot().makeScreenshot($("canvas[role='img']"))
-    ));
+      .assertArchivedSpendingHasSum(spending.amount())
+      .assertDiff(expected, $("canvas[role='img']"));
   }
 }
