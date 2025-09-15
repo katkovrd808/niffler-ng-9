@@ -1,9 +1,11 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.spend.Bubble;
 import guru.qa.niffler.page.base.BasePage;
 import guru.qa.niffler.page.element.HeaderElement;
 import guru.qa.niffler.page.element.SpendingTable;
+import guru.qa.niffler.page.element.StatElement;
 import io.qameta.allure.Step;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -16,6 +18,7 @@ import static com.codeborne.selenide.Selenide.$;
 public class MainPage extends BasePage<MainPage> {
   private final SpendingTable spendingTable = new SpendingTable();
   private final HeaderElement headerElement = new HeaderElement();
+  private final StatElement statElement = new StatElement();
 
   private final SelenideElement statistics = $("#stat h2");
   private final SelenideElement legend = $("#legend-container");
@@ -73,5 +76,23 @@ public class MainPage extends BasePage<MainPage> {
   public CreateSpendingPage openCreateSpendingPageFromHeader() {
     headerElement.openCreateSpendPage();
     return new CreateSpendingPage();
+  }
+
+  @Step("Asserting statistic bubbles content and colors")
+  public MainPage checkStatBubbles(Bubble... bubbles) {
+    statElement.checkBubbles(bubbles);
+    return this;
+  }
+
+  @Step("Asserting statistic bubbles content and colors in any order")
+  public MainPage checkStatBubblesAnyOrder(Bubble... bubbles) {
+    statElement.checkStatisticBubblesInAnyOrder(bubbles);
+    return this;
+  }
+
+  @Step("Asserting statistic bubbles contains {bubbles}")
+  public MainPage checkStatBubblesContains(Bubble... bubbles) {
+    statElement.checkStatisticBubblesContains(bubbles);
+    return this;
   }
 }

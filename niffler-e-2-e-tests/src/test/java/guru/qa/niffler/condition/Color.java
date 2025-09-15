@@ -15,4 +15,13 @@ public enum Color {
   purple("rgba(148, 85, 198, 1)");
 
   public final String rgb;
+
+  public static Color byRgba(String rgba) {
+    for (Color color : values()) {
+      if (color.rgb.equals(rgba)) {
+        return color;
+      }
+    }
+    throw new IllegalArgumentException("No color with rgba: " + rgba);
+  }
 }

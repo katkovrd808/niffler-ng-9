@@ -1,10 +1,12 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.spend.Bubble;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.page.LoginPage;
@@ -19,9 +21,11 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
+import static guru.qa.niffler.model.CurrencyValues.RUB;
 import static guru.qa.niffler.page.element.DateRange.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -304,5 +308,99 @@ public class SpendingTest {
       .archiveCategoryAndReturn(spending.category().name())
       .assertArchivedSpendingHasSum(spending.amount())
       .assertDiff(expected, $("canvas[role='img']"));
+  }
+
+  @User(
+    spendings = @Spending(
+      category = "Рыбалка",
+      description = "Рыбалка на неве",
+      amount = 1000
+    )
+  )
+  @Test
+  @DisplayName("Created spending category should be displayed at chart bubbles")
+  void statBubblesContentShouldContainValidTextAndColor(UdUserJson user) {
+    Selenide.open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .checkStatBubbles(
+        Bubble.from(user, RUB, Color.yellow, 0)
+      );
+  }
+
+  @User(
+    spendings = {@Spending(
+      category = "Рыбалка",
+      description = "Рыбалка на неве",
+      amount = 1000
+    ),
+      @Spending(
+        category = "Автомобиль",
+        description = "Ремонт автомобиля",
+        amount = 10000
+      ),
+      @Spending(
+        category = "Динозавр",
+        description = "Покупка динозавра",
+        amount = 200
+      )}
+  )
+  @Test
+  @DisplayName("Created spending category should be displayed at chart bubbles")
+  void statBubblesContentShouldBeAssertedInAnyOrder(UdUserJson user) {
+    Selenide.open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .checkStatBubblesAnyOrder(
+        Bubble.from(user, RUB, Color.yellow, 1),
+        Bubble.from(user, RUB, Color.green, 0),
+        Bubble.from(user, RUB, Color.blue100, 2)
+      );
+  }
+
+  @User(
+    spendings = {@Spending(
+      category = "Рыбалка",
+      description = "Рыбалка на неве",
+      amount = 1000
+    ),
+      @Spending(
+        category = "Автомобиль",
+        description = "Ремонт автомобиля",
+        amount = 10000
+      )}
+  )
+  @Test
+  @DisplayName("Created spending category should be displayed at chart bubbles")
+  void statBubblesContentShouldContain(UdUserJson user) {
+    Selenide.open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .checkStatBubblesContains(
+        Bubble.from(user, RUB, Color.green, 0)
+      );
+  }
+
+  @User(
+    spendings = {@Spending(
+      amount = 90,
+      description = "First spending should be displayed"
+    ),
+      @Spending(
+        amount = 100,
+        description = "Second spending should be displayed"
+      )}
+  )
+  @Test
+  @DisplayName("Created spendings should be displayed in table and asserted by custom assertion")
+  void createdSpendingsShouldBeVisibleInTableAssertedByCustomAssertion(UdUserJson user) {
+    var spendings = user.testData().spendings();
+
+    open(FRONT_URL, LoginPage.class)
+      .fillLoginPage(user.username(), user.testData().password())
+      .submit()
+      .checkThatPageLoaded()
+      .spendingTableShouldBeLoaded()
+      .checkTableContains(spendings.toArray(SpendJson[]::new));
   }
 }
