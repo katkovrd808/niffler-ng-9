@@ -75,8 +75,7 @@ public class SpendingTable extends BaseElement<SpendingTable> {
 
   @Step("Asserting spendings table contains {spendings}")
   public SpendingTable checkTableContains(SpendJson... spendings) {
-    ElementsCollection spendingElements = self.$$("tbody tr");
-    spendingElements.should(spends(spendings));
+    self.$$("tbody tr").should(spends(spendings));
     return this;
   }
 
