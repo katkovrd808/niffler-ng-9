@@ -2,6 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import guru.qa.niffler.api.allure.ScreenDiff;
+import guru.qa.niffler.exception.ImageComparisonException;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import io.qameta.allure.Allure;
 import lombok.SneakyThrows;
@@ -38,24 +39,26 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
   }
 
   @Override
-  public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable, Exception {
+  public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
     boolean overwrite = context.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).rewriteExpected();
+    try {
+      ScreenDiff screenDif = new ScreenDiff(
+        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
+        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
+        "data:image/png;base64," + encoder.encodeToString(imageToBytes(getDiff()))
+      );
 
-    ScreenDiff screenDif = new ScreenDiff(
-      "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
-      "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
-      "data:image/png;base64," + encoder.encodeToString(imageToBytes(getDiff()))
-    );
-
-    Allure.addAttachment(
-      "Screenshot diff",
-      "application/vnd.allure.image.diff",
-      objectMapper.writeValueAsString(screenDif)
-    );
-
-    if (overwrite) {
-      var overwriteRoot = context.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).value();
-      ImageIO.write(getActual(), "png", new File("src/test/resources", overwriteRoot));
+      Allure.addAttachment(
+        "Screenshot diff",
+        "application/vnd.allure.image.diff",
+        objectMapper.writeValueAsString(screenDif)
+      );
+    } catch (IOException e) {
+      if (overwrite) {
+        var overwriteRoot = context.getRequiredTestMethod().getDeclaredAnnotation(ScreenShotTest.class).value();
+        ImageIO.write(getActual(), "png", new File("src/test/resources", overwriteRoot));
+      }
+      throw new ImageComparisonException("Image comparison exception: ", e);
     }
 
     throw throwable;

@@ -2,6 +2,7 @@ package guru.qa.niffler.page.element;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.base.BaseElement;
 import io.qameta.allure.Step;
@@ -10,7 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.page.element.DateRange.*;
+import static guru.qa.niffler.condition.SpendsCondition.spends;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
@@ -69,6 +70,12 @@ public class SpendingTable extends BaseElement<SpendingTable> {
       spendingElements.findBy(text(description))
         .shouldHave(text(description));
     }
+    return this;
+  }
+
+  @Step("Asserting spendings table contains {spendings}")
+  public SpendingTable checkTableContains(SpendJson... spendings) {
+    self.$$("tbody tr").should(spends(spendings));
     return this;
   }
 
