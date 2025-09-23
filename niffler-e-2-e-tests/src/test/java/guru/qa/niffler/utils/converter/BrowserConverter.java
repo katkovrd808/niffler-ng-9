@@ -1,7 +1,10 @@
 package guru.qa.niffler.utils.converter;
 
+import com.codeborne.selenide.SelenideDriver;
+import guru.qa.niffler.jupiter.extension.NonStaticBrowsersExtension;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
 
@@ -11,14 +14,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class BrowserConverter implements ArgumentConverter {
 
+  @RegisterExtension
+  private final NonStaticBrowsersExtension browsersExtension = new NonStaticBrowsersExtension();
+
   @Nonnull
   @Override
   @SneakyThrows
   public Object convert(@Nonnull Object source, ParameterContext context) throws ArgumentConversionException {
     Class<?> target = context.getParameter().getType();
-    if (!Browser.class.equals(target)) {
-      throw new ArgumentConversionException("Waiting Browser.class type, given: " + target);
+    if (!SelenideDriver.class.equals(target)) {
+      throw new ArgumentConversionException("Waiting SelenideDriver.class type in Method Parameters but given: " + target);
     }
-    return Browser.valueOf(source.toString());
+    return browsersExtension.withDriver(Browser.valueOf(source.toString()));
   }
 }

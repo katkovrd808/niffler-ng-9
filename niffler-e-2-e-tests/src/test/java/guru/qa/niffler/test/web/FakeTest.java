@@ -16,13 +16,9 @@ public class FakeTest {
 
   private static final String FRONT_URL = Config.getInstance().frontUrl();
 
-  @RegisterExtension
-  private final NonStaticBrowsersExtension browsersExtension = new NonStaticBrowsersExtension();
-
   @ParameterizedTest(name = "Test should run with browser {0} in parallel with other browser")
   @EnumSource(Browser.class)
-  void browsersTest(@ConvertWith(BrowserConverter.class) Browser browser) {
-    SelenideDriver driver = browsersExtension.withDriver(browser);
+  void browsersTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
     driver.open(FRONT_URL);
     driver.$(".logo-section__text").shouldHave(text("Niffler"));
   }
