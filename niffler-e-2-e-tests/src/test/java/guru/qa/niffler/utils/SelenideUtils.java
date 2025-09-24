@@ -11,6 +11,6 @@ public class SelenideUtils {
 
   @Nonnull
   public static SelenideConfig getConfig(Browser browser) {
-    return new SelenideConfig().browser(browser.getName()).pageLoadStrategy("eager").timeout(5000L);
+    return browser.getConfig();
   }
 }
