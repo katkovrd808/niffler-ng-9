@@ -34,35 +34,50 @@ public class AuthApiClient extends RestClient {
   public String login(String username, String password) throws UnsupportedEncodingException {
     final String codeVerifier = generateCodeVerifier();
     final String codeChallenge = generateCodeChallenge(codeVerifier);
+    final String token;
 
-    final Response<JsonNode> response;
     try {
-      authApi.authorizeOAuth(
-        RESPONSE_TYPE,
-        CLIENT_ID,
-        "openid",
-        REDIRECT_URI,
-        codeChallenge,
-        "S256"
-      ).execute();
-
-      authApi.loginOAuth(
-        ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN"),
-        username,
-        password
-      ).execute();
-
-      response = authApi.tokenOAuth(
-        ThreadSafeQueryStore.INSTANCE.get("code"),
-        REDIRECT_URI,
-        codeVerifier,
-        "authorization_code",
-        CLIENT_ID
-      ).execute();
-
+      authorizeOAuth(codeChallenge);
+      loginOAuth(username, password);
+      token = requestTokenOAuth(codeVerifier);
     } catch (IOException e) {
       throw new AssertionError(e);
     }
+    return token;
+  }
+
+  private void authorizeOAuth(String codeChallenge) throws IOException {
+    final Response<Void> response;
+    response = authApi.authorizeOAuth(
+      RESPONSE_TYPE,
+      CLIENT_ID,
+      "openid",
+      REDIRECT_URI,
+      codeChallenge,
+      "S256"
+    ).execute();
+    assertEquals(200, response.code());
+  }
+
+  private void loginOAuth(String username, String password) throws IOException {
+    final Response<Void> response;
+    response = authApi.loginOAuth(
+      ThreadSafeCookieStore.INSTANCE.cookieValue("XSRF-TOKEN"),
+      username,
+      password
+    ).execute();
+    assertEquals(200, response.code());
+  }
+
+  private String requestTokenOAuth(String codeVerifier) throws IOException {
+    final Response<JsonNode> response;
+    response = authApi.tokenOAuth(
+      ThreadSafeQueryStore.INSTANCE.get("code"),
+      REDIRECT_URI,
+      codeVerifier,
+      "authorization_code",
+      CLIENT_ID
+    ).execute();
     assertEquals(200, response.code());
     return response.body().get("id_token").asText();
   }
