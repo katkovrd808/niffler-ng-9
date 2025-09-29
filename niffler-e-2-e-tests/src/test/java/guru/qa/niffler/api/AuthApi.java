@@ -1,12 +1,10 @@
 package guru.qa.niffler.api;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 public interface AuthApi {
 
@@ -21,4 +19,27 @@ public interface AuthApi {
 
   @POST("/update")
   Call<UdUserJson> update(@Body UdUserJson user);
+
+  //OAUTH 2.0 Methods
+  @GET("oauth2/authorize")
+  Call<Void> authorizeOAuth(@Query("response_type") String responseType,
+                                    @Query("client_id") String clientId,
+                                    @Query("scope") String scope,
+                                    @Query(value = "redirect_uri", encoded = true) String redirectUri,
+                                    @Query(value = "code_challenge", encoded = true) String codeChallenge,
+                                    @Query(value = "code_challenge_method", encoded = true) String codeChallengeMethod);
+
+  @FormUrlEncoded
+  @POST("/login")
+  Call<Void> loginOAuth(@Field(value = "_csrf", encoded = true) String csrf,
+                                @Field("username") String username,
+                                @Field("password") String password);
+
+  @FormUrlEncoded
+  @POST("oauth2/token")
+  Call<JsonNode> tokenOAuth(@Field(value = "code", encoded = true) String code,
+                            @Field(value = "redirect_uri", encoded = true) String redirectUri,
+                            @Field(value = "code_verifier", encoded = true) String codeVerifier,
+                            @Field("grant_type") String grantType,
+                            @Field("client_id") String clientId);
 }

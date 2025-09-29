@@ -12,9 +12,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
+@ParametersAreNonnullByDefault
 public abstract class RestClient {
 
   protected static final Config CFG = Config.getInstance();
@@ -26,25 +28,29 @@ public abstract class RestClient {
     this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, null);
   }
 
-  public RestClient(String baseUrl, boolean followRedirect) {
-    this(baseUrl, followRedirect, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, null);
+  public RestClient(String baseUrl, boolean followRedirects) {
+    this(baseUrl, followRedirects, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, null);
   }
 
-  public RestClient(String baseUrl, boolean followRedirect, Converter.Factory converterFactory) {
-    this(baseUrl, followRedirect, converterFactory, HttpLoggingInterceptor.Level.HEADERS, null);
+  public RestClient(String baseUrl, boolean followRedirects, Interceptor... interceptors) {
+    this(baseUrl, followRedirects, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, interceptors);
+  }
+
+  public RestClient(String baseUrl, boolean followRedirects, Converter.Factory converterFactory) {
+    this(baseUrl, followRedirects, converterFactory, HttpLoggingInterceptor.Level.HEADERS, null);
   }
 
   public RestClient(String baseUrl, Converter.Factory converterFactory) {
     this(baseUrl, false, converterFactory, HttpLoggingInterceptor.Level.HEADERS, null);
   }
 
-  public RestClient(String baseUrl, boolean followRedirect, Converter.Factory converterFactory, Interceptor... interceptors) {
-    this(baseUrl, followRedirect, converterFactory, HttpLoggingInterceptor.Level.HEADERS, interceptors);
+  public RestClient(String baseUrl, boolean followRedirects, Converter.Factory converterFactory, Interceptor... interceptors) {
+    this(baseUrl, followRedirects, converterFactory, HttpLoggingInterceptor.Level.HEADERS, interceptors);
   }
 
-  public RestClient(String baseUrl, boolean followRedirect, Converter.Factory converterFactory, HttpLoggingInterceptor.Level level, @Nullable Interceptor... interceptors) {
+  public RestClient(String baseUrl, boolean followRedirects, Converter.Factory converterFactory, HttpLoggingInterceptor.Level level, @Nullable Interceptor... interceptors) {
     OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
-      .followRedirects(followRedirect);
+      .followRedirects(followRedirects);
 
     if (interceptors != null) {
       for (Interceptor interceptor : interceptors) {
