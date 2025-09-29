@@ -18,6 +18,8 @@ import static com.codeborne.selenide.Selenide.$;
 public class CreateSpendingPage extends BasePage<CreateSpendingPage> {
   private final CalendarElement calendarElement = new CalendarElement();
 
+  public final static String URL = CFG.frontUrl() + "spending";
+
   private final SelenideElement self = $("form"),
     amountInput = self.$("#amount"),
     currencySelector = self.$("#currency"),

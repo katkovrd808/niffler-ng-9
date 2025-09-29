@@ -19,6 +19,8 @@ public class FriendsPage extends BasePage<FriendsPage> {
         nextPageBtn = $("#page-next"),
         prevPageBtn = $("#page-prev");
 
+    public final static String URL = CFG.frontUrl() + "people/friends";
+
     public FriendsPage checkThatPageOpen(){
         pageTab.$$("a").find(href("/people/friends")).
                 shouldHave(attribute("aria-selected", "true"));

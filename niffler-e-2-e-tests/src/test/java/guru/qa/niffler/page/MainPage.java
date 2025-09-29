@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.spend.Bubble;
 import guru.qa.niffler.page.base.BasePage;
 import guru.qa.niffler.page.element.HeaderElement;
@@ -22,6 +23,8 @@ public class MainPage extends BasePage<MainPage> {
 
   private final SelenideElement statistics = $("#stat h2");
   private final SelenideElement legend = $("#legend-container");
+
+  public final static String URL = CFG.frontUrl() + "main";
 
   @Step("Asserting that main page is loaded")
   public MainPage checkThatPageLoaded() {

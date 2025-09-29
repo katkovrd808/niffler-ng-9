@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.base.BasePage;
 import io.qameta.allure.Step;
 
@@ -19,6 +20,10 @@ public class LoginPage {
       loginForm = $("#login-form"),
       registrationBtn = $("#register-button"),
       formError = $("#login-form p");
+
+  private final static Config CFG = Config.getInstance();
+
+  public final static String URL = CFG.authUrl() + "login";
 
   @Step("Logging in user profile")
   public LoginPage fillLoginPage(String username, String password) {

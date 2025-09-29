@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -16,6 +17,10 @@ public class RegistrationPage {
         registrationForm = $("#register-form"),
         signupBtn = $("#register-button"),
         formError = $(".form__error");
+
+    private final static Config CFG = Config.getInstance();
+
+    public final static String URL = CFG.authUrl() + "register";
 
     public RegistrationPage fillRegistrationForm(String username, String password, String submittedPassword){
         usernameInput.val(username);

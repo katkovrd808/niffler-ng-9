@@ -19,6 +19,8 @@ public class ProfilePage extends BasePage<ProfilePage> {
     categoriesForm = $x("//*/main/div/div"),
     archiveCategoryModal = $("div[role='dialog']");
 
+  public final static String URL = CFG.frontUrl() + "profile";
+
   @Step("Asserting username {username}")
   public ProfilePage checkUsername(String username) {
     profileInfoForm.$("#username").shouldHave(attribute("value", username))

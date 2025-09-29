@@ -17,6 +17,8 @@ public class AllPeoplePage extends BasePage<AllPeoplePage> {
         nextPageBtn = $("#page-next"),
         prevPageBtn = $("#page-prev");
 
+    public final static String URL = CFG.frontUrl() + "people/all";
+
     public AllPeoplePage checkThatPageOpen(){
         pageTab.$$("a").find(href("/people/all")).
                 shouldHave(attribute("aria-selected", "true"));
