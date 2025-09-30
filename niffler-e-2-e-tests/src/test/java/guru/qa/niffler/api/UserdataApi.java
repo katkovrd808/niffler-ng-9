@@ -20,9 +20,21 @@ public interface UserdataApi {
   Call<List<UdUserJson>> allUsers(@Query("username") String username,
                                   @Nullable @Query("searchQuery") String searchQuery);
 
+  @GET("internal/users/all")
+  Call<List<UdUserJson>> allUsers(@Query("username") String username);
+
   @POST("internal/invitations/send")
-  Call<UdUserJson> sendInvitation(@Query("username") String username, @Query("targetUsername") String targetUsername);
+  Call<UdUserJson> sendInvitation(@Query("username") String username,
+                                  @Query("targetUsername") String targetUsername);
 
   @POST("internal/invitations/accept")
-  Call<UdUserJson> acceptFriendship(@Query("username") String username, @Query("targetUsername") String targetUsername);
+  Call<UdUserJson> acceptFriendship(@Query("username") String username,
+                                    @Query("targetUsername") String targetUsername);
+
+  @GET("internal/friends/all")
+  Call<List<UdUserJson>> findFriends(@Query("username") String username,
+                                     @Nullable @Query("searchQuery") String searchQuery);
+
+  @GET("internal/friends/all")
+  Call<List<UdUserJson>> findFriends(@Query("username") String username);
 }

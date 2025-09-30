@@ -1,14 +1,22 @@
 package guru.qa.niffler.jupiter.extension;
 
+import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UdUserJson;
+import guru.qa.niffler.service.SpendClient;
+import guru.qa.niffler.service.UserdataClient;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.impl.UsersApiClient;
+import guru.qa.niffler.service.impl.SpendApiClient;
+import guru.qa.niffler.service.impl.UserdataApiClient;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static guru.qa.niffler.jupiter.extension.TestMethodContextExtension.context;
@@ -19,7 +27,9 @@ public class UserExtension implements BeforeEachCallback, AfterTestExecutionCall
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
   public static final String DEFAULT_PASSWORD = "secret";
 
-  private final UsersClient usersClient = new UsersApiClient();
+  private final UsersClient usersClient = new UsersDbClient();
+  private final UserdataClient userdataClient = new UserdataApiClient();
+  private final SpendClient spendClient = new SpendApiClient();
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
@@ -34,19 +44,29 @@ public class UserExtension implements BeforeEachCallback, AfterTestExecutionCall
         final List<UdUserJson> outcomes = usersClient.addInvitation(user, userAnno.outcomeInvitations());
         final List<UdUserJson> friends = usersClient.addFriend(user, userAnno.friends());
 
+        final List<SpendJson> spendings = new ArrayList<>();
+        final List<CategoryJson> categories = new ArrayList<>();
+
+        if (user.username().equals(userAnno.username())) {
+          final boolean hasArchived = Arrays.stream(userAnno.categories()).noneMatch(Category::archived);
+          spendings.addAll(spendClient.findSpendings(user.username()));
+          categories.addAll(spendClient.findCategories(user.username(), hasArchived));
+
+          incomes.addAll(userdataClient.findIncomeInvitations(user.username()));
+          outcomes.addAll(userdataClient.findOutcomeInvitations(user.username()));
+          friends.addAll(userdataClient.findAllFriends(user.username()));
+        }
+
         TestData testData = new TestData(
           DEFAULT_PASSWORD,
           friends,
           incomes,
           outcomes,
-          new ArrayList<>(),
-          new ArrayList<>()
+          categories,
+          spendings
         );
 
-        context.getStore(NAMESPACE).put(
-          context.getUniqueId(),
-          user.addTestData(testData)
-        );
+        setUser(user.addTestData(testData));
       });
   }
 
@@ -65,6 +85,14 @@ public class UserExtension implements BeforeEachCallback, AfterTestExecutionCall
   public UdUserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws
     ParameterResolutionException {
     return createdUser();
+  }
+
+  public static void setUser(UdUserJson testUser) {
+    final ExtensionContext context = TestMethodContextExtension.context();
+    context.getStore(NAMESPACE).put(
+      context.getUniqueId(),
+      testUser
+    );
   }
 
   public static UdUserJson createdUser() {

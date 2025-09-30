@@ -2,6 +2,7 @@ package guru.qa.niffler.service;
 
 import guru.qa.niffler.model.userdata.UdUserJson;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -9,15 +10,27 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 public interface UserdataClient {
 
-  @Nullable
+  @Nonnull
   UdUserJson currentUser(String username);
 
-  @Nullable
-  List<UdUserJson> allUsersExceptCurrent(String username, String searchQuery);
+  @Nonnull
+  List<UdUserJson> allUsersExceptCurrent(String username, @Nullable String searchQuery);
 
-  @Nullable
+  @Nonnull
   UdUserJson sendInvitation(String username, String targetUsername);
 
-  @Nullable
+  @Nonnull
   UdUserJson acceptInvitation(String username, String targetUsername);
+
+  @Nonnull
+  List<UdUserJson> findAllFriends(String username, @Nullable String searchQuery);
+
+  @Nonnull
+  List<UdUserJson> findIncomeInvitations(String username);
+
+  @Nonnull
+  List<UdUserJson> findOutcomeInvitations(String username);
+
+  @Nonnull
+  List<UdUserJson> findAllFriends(String username);
 }

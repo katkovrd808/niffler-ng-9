@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @ParametersAreNonnullByDefault
 public interface UsersClient {
-    //ADD FACTORY LOGIC
+    //TODO ADD FACTORY LOGIC WHEN DOCKER WILL BE SET UP
     static UsersClient getInstance() {
         return new UsersDbClient();
     }
@@ -37,6 +37,5 @@ public interface UsersClient {
     @Nonnull
     List<UdUserJson> addFriend(UdUserJson targetUser, int count);
 
-    @Nonnull
     void delete(UdUserJson user);
 }

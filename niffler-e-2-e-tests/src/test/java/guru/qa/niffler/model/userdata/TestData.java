@@ -2,11 +2,14 @@ package guru.qa.niffler.model.userdata;
 
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.List;
 
 @ParametersAreNonnullByDefault
@@ -19,6 +22,9 @@ public record TestData(
         List<SpendJson> spendings
 ) {
 
+    public TestData(String password) {
+        this(password, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
 
     @Nonnull
     public TestData addCategories(List<CategoryJson> categories) {
