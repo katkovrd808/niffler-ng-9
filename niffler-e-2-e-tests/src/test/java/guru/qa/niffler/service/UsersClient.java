@@ -37,6 +37,5 @@ public interface UsersClient {
     @Nonnull
     List<UdUserJson> addFriend(UdUserJson targetUser, int count);
 
-    @Nonnull
     void delete(UdUserJson user);
 }

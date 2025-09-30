@@ -44,7 +44,8 @@ public record UdUserJson(
     this(null, username, null, null, null, null, null, null, null, testData);
   }
 
-  public static UdUserJson fromEntity(UdUserEntity entity, FriendshipStatus friendshipStatus) {
+  @Nonnull
+  public static UdUserJson fromEntity(UdUserEntity entity, @Nullable FriendshipStatus friendshipStatus) {
     return new UdUserJson(
             entity.getId(),
             entity.getUsername(),
@@ -59,6 +60,7 @@ public record UdUserJson(
     );
   }
 
+  @Nonnull
   public UdUserJson addTestData(TestData testData) {
     return new UdUserJson(
             id,

@@ -2,7 +2,9 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
@@ -22,6 +24,8 @@ public class RegistrationPage {
 
     public final static String URL = CFG.authUrl() + "register";
 
+    @Nonnull
+    @Step("Entering user {username} data to registration form")
     public RegistrationPage fillRegistrationForm(String username, String password, String submittedPassword){
         usernameInput.val(username);
         passwordInput.val(password);
@@ -29,11 +33,15 @@ public class RegistrationPage {
         return this;
     }
 
+    @Nonnull
+    @Step("Submitting registration form")
     public SucceedRegistrationPage submitRegistration(){
         signupBtn.click();
         return new SucceedRegistrationPage();
     }
 
+    @Nonnull
+    @Step("Asserting username field error text to be equal {error}")
     public RegistrationPage submitRegistrationAndCheckUsernameError(String error){
         signupBtn.click();
         registrationForm.$$("label").find(text("Username"))
@@ -41,12 +49,16 @@ public class RegistrationPage {
         return this;
     }
 
-    public RegistrationPage completeRegistrationAndCheckFormError(String errorText) {
+    @Nonnull
+    @Step("Asserting form error text be to equal {error}")
+    public RegistrationPage completeRegistrationAndCheckFormError(String error) {
         signupBtn.click();
-        formError.shouldHave(text(errorText));
+        formError.shouldHave(text(error));
         return this;
     }
 
+    @Nonnull
+    @Step("Asserting password field error text to be equal {error}")
     public RegistrationPage submitRegistrationAndCheckPasswordError(String error){
         signupBtn.click();
         registrationForm.$$("label").find(text("Password"))

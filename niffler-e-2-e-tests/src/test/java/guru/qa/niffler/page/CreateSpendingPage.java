@@ -7,7 +7,9 @@ import guru.qa.niffler.page.base.BasePage;
 import guru.qa.niffler.page.element.CalendarElement;
 import guru.qa.niffler.page.element.SpendingTable;
 import guru.qa.niffler.utils.RandomDataUtils;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 
@@ -27,6 +29,8 @@ public class CreateSpendingPage extends BasePage<CreateSpendingPage> {
     descriptionInput = self.$("#description"),
     saveBtn = $("#save");
 
+  @Nonnull
+  @Step("Creating spending")
   public SpendingTable createSpending(SpendJson spend, CurrencyValues currency) {
     amountInput.val(spend.amount().toString());
     currencySelector.click();
@@ -39,6 +43,8 @@ public class CreateSpendingPage extends BasePage<CreateSpendingPage> {
     return new SpendingTable();
   }
 
+  @Nonnull
+  @Step("Creating spending with description {description}")
   public SpendingTable createSpending(String description) {
     amountInput.val("100");
     currencySelector.click();

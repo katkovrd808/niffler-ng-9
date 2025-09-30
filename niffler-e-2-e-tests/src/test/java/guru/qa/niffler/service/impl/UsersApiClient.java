@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ParametersAreNonnullByDefault
 public class UsersApiClient extends RestClient implements UsersClient {
 
-  private static final String defaultPassword = "secret";
+  private static final String DEFAULT_PASSWORD = "secret";
 
   private final AuthApi authApi;
   private final UserdataApiClient userdataApi;
@@ -35,7 +35,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
     userdataApi = new UserdataApiClient();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public UdUserJson create(String username, String password) {
     try {
@@ -52,7 +52,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
       while (sw.getTime(TimeUnit.SECONDS) < 30) {
         UdUserJson userJson = userdataApi.currentUser(username);
         if (userJson != null && userJson.id() != null) {
-          return userJson;
+          return userJson.addTestData(new TestData(DEFAULT_PASSWORD));
         } else {
           try {
             Thread.sleep(100);
@@ -68,25 +68,26 @@ public class UsersApiClient extends RestClient implements UsersClient {
   }
 
   @SneakyThrows
+  @Nonnull
   @Override
   public Optional<UdUserJson> findById(UUID id) {
     throw new OperationNotSupportedException("Operation FIND BY ID is not supported in current API version");
   }
 
   @SneakyThrows
+  @Nonnull
   @Override
   public List<UdUserJson> findAll() {
     throw new OperationNotSupportedException("Operation FIND ALL is not supported in current API version");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Optional<UdUserJson> findByUsername(String username) {
     return Optional.ofNullable(userdataApi.currentUser(username));
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public UdUserJson update(UdUserJson user) {
     final Response<UdUserJson> response;
@@ -99,8 +100,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
     return response.body();
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public List<UdUserJson> addInvitation(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
@@ -121,8 +121,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
     return result;
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public List<UdUserJson> addFriend(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
