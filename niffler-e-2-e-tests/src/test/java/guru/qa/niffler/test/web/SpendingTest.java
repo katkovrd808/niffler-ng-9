@@ -2,14 +2,15 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.condition.Color;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.spend.Bubble;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.ProfilePage;
 import guru.qa.niffler.utils.ActualScreenShot;
 import guru.qa.niffler.utils.RandomDataUtils;
 import guru.qa.niffler.utils.ScreenDiffResult;
@@ -21,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @Tags({@Tag("WEB")})
 @ParametersAreNonnullByDefault
 public class SpendingTest {
-  private static final String FRONT_URL = Config.getInstance().frontUrl();
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 89990.00,
@@ -41,74 +41,67 @@ public class SpendingTest {
       category = "Обучение"
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Spending description should be changed after editing in spending table")
   void spendingDescriptionShouldBeChangedAfterEditing(UdUserJson user) {
     final String newDescription = ":)";
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .editSpending(user.testData().spendings().getFirst().description())
       .setNewSpendingDescription(newDescription)
       .save()
       .checkTableContains(newDescription);
   }
 
-  @User()
   @Test
+  @User
+  @ApiLogin
   @DisplayName("Spending should be created")
-  void spendingShouldBeCreated(UdUserJson user) {
+  void spendingShouldBeCreated() {
     final String description = RandomDataUtils.randomSentence(2);
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .openCreateSpendingPageFromHeader()
       .createSpending(description)
       .checkTableContains(description);
   }
 
+  @Test
   @User(
+    username = "test1",
     spendings = @Spending(
       amount = 1000,
       description = "Spending should be deleted"
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Spending should be deleted")
   void spendingShouldBeDeletedFromTable(UdUserJson user) {
     final String description = user.testData().spendings().getFirst().description();
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .deleteSpending(description)
       .checkThatTableNotContainsSpending(description);
   }
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 1000,
       description = "Spending should be displayed"
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("All Time period value should display all users spendings")
   void allTimePeriodShouldDisplayAllUsersSpendings(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .selectPeriod(ALL_TIME)
       .checkTableContains(user.testData().spendings().getFirst().description());
   }
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 1000,
@@ -116,18 +109,16 @@ public class SpendingTest {
       spendDate = LAST_MONTH
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Last month period value should display all users spendings created at last month")
   void lastMonthPeriodShouldDisplayAllUsersSpendingsCreatedAtLastMonth(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .selectPeriod(LAST_MONTH)
       .checkTableContains(user.testData().spendings().getFirst().description());
   }
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 1000,
@@ -135,53 +126,47 @@ public class SpendingTest {
       spendDate = LAST_WEEK
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Last week period value should display all users spendings created at last week")
   void lastWeekPeriodShouldDisplayAllUsersSpendingsCreatedAtLastWeek(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .selectPeriod(LAST_WEEK)
       .checkTableContains(user.testData().spendings().getFirst().description());
   }
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 1000,
       description = "Spending should be displayed"
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Today period value should display all users spendings created at current day")
   void todayPeriodShouldDisplayAllUsersSpendingsCreatedAtThisDay(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .selectPeriod(TODAY)
       .checkTableContains(user.testData().spendings().getFirst().description());
   }
 
+  @Test
   @User(
     spendings = @Spending(
       amount = 100,
       description = "Spending should be displayed"
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spending should be displayed in table")
   void createdSpendingShouldBeVisibleInTable(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .checkTableContains(user.testData().spendings().getFirst().description());
   }
 
+  @Test
   @User(
     spendings = {@Spending(
       amount = 100,
@@ -192,7 +177,7 @@ public class SpendingTest {
         description = "Second spending should be displayed"
       )}
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spendings should be displayed in table")
   void createdSpendingsShouldBeVisibleInTable(UdUserJson user) {
     var spendings = user.testData().spendings();
@@ -201,14 +186,12 @@ public class SpendingTest {
       spendings.getLast().description()
     };
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .checkTableContains(spendingDescriptions);
   }
 
+  @Test
   @User(
     spendings = {@Spending(
       amount = 80,
@@ -219,19 +202,17 @@ public class SpendingTest {
         description = "Second spending should be displayed"
       )}
   )
-  @Test
+  @ApiLogin
   @DisplayName("Table size should be equal to amount of user spendings")
   void tableSizeShouldBeEqualToAmountOfSpendings(UdUserJson user) {
     var spendings = user.testData().spendings();
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
+    open(MainPage.URL, MainPage.class)
       .spendingTableShouldBeLoaded()
       .checkTableSize(spendings.size());
   }
 
+  @ScreenShotTest("img/expected/expected-stat.png")
   @User(
     spendings = @Spending(
       category = "Обучение",
@@ -239,19 +220,16 @@ public class SpendingTest {
       amount = 79990
     )
   )
-  @ScreenShotTest("img/expected/expected-stat.png")
+  @ApiLogin
   @DisplayName("Created spending should be displayed in chart")
-  void checkStatComponent(UdUserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit();
-
+  void checkStatComponent(BufferedImage expected) throws IOException {
     assertFalse(new ScreenDiffResult(
       expected,
       new ActualScreenShot().makeScreenshot($("canvas[role='img']"))
     ));
   }
 
+  @ScreenShotTest("img/expected/expected-stat-edited.png")
   @User(
     spendings = @Spending(
       category = "Обучение",
@@ -259,18 +237,17 @@ public class SpendingTest {
       amount = 79990
     )
   )
-  @ScreenShotTest("img/expected/expected-stat-edited.png")
+  @ApiLogin
   @DisplayName("Spending amount should change in chart after editing")
   void checkStatComponentAfterEdit(UdUserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    Selenide.open(MainPage.URL, MainPage.class)
       .editSpending(user.testData().spendings().getFirst().description())
       .setNewSpendingPrice(1000)
       .save()
       .assertDiff(expected, $("canvas[role='img']"));
   }
 
+  @ScreenShotTest("img/expected/expected-stat-deleted.png")
   @User(
     spendings = @Spending(
       category = "Обучение",
@@ -278,17 +255,16 @@ public class SpendingTest {
       amount = 79990
     )
   )
-  @ScreenShotTest("img/expected/expected-stat-deleted.png")
+  @ApiLogin
   @DisplayName("Deleted spendings should not be displayed in chart")
   void checkStatComponentAfterDelete(UdUserJson user, BufferedImage expected) throws IOException {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    Selenide.open(MainPage.URL, MainPage.class)
       .deleteSpending(user.testData().spendings().getFirst().description())
       .checkAlert("Spendings succesfully deleted")
       .assertDiff(expected, $("canvas[role='img']"));
   }
 
+  @ScreenShotTest(("img/expected/expected-stat-archived.png"))
   @User(
     spendings = @Spending(
       category = "Обучение",
@@ -296,20 +272,18 @@ public class SpendingTest {
       amount = 79990
     )
   )
-  @ScreenShotTest(("img/expected/expected-stat-archived.png"))
+  @ApiLogin
   @DisplayName("Archived spendings should be displayed in chart")
   void checkStatComponentAfterArchive(UdUserJson user, BufferedImage expected) throws IOException {
     final SpendJson spending = user.testData().spendings().getFirst();
 
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .openProfilePageFromHeader()
+    Selenide.open(ProfilePage.URL, ProfilePage.class)
       .archiveCategoryAndReturn(spending.category().name())
       .assertArchivedSpendingHasSum(spending.amount())
       .assertDiff(expected, $("canvas[role='img']"));
   }
 
+  @Test
   @User(
     spendings = @Spending(
       category = "Рыбалка",
@@ -317,17 +291,16 @@ public class SpendingTest {
       amount = 1000
     )
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spending category should be displayed at chart bubbles")
   void statBubblesContentShouldContainValidTextAndColor(UdUserJson user) {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    Selenide.open(MainPage.URL, MainPage.class)
       .checkStatBubbles(
         Bubble.from(user, RUB, Color.yellow, 0)
       );
   }
 
+  @Test
   @User(
     spendings = {@Spending(
       category = "Рыбалка",
@@ -345,12 +318,10 @@ public class SpendingTest {
         amount = 200
       )}
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spending category should be displayed at chart bubbles")
   void statBubblesContentShouldBeAssertedInAnyOrder(UdUserJson user) {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    Selenide.open(MainPage.URL, MainPage.class)
       .checkStatBubblesAnyOrder(
         Bubble.from(user, RUB, Color.yellow, 1),
         Bubble.from(user, RUB, Color.green, 0),
@@ -358,6 +329,7 @@ public class SpendingTest {
       );
   }
 
+  @Test
   @User(
     spendings = {@Spending(
       category = "Рыбалка",
@@ -370,17 +342,16 @@ public class SpendingTest {
         amount = 10000
       )}
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spending category should be displayed at chart bubbles")
   void statBubblesContentShouldContain(UdUserJson user) {
-    Selenide.open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    Selenide.open(MainPage.URL, MainPage.class)
       .checkStatBubblesContains(
         Bubble.from(user, RUB, Color.green, 0)
       );
   }
 
+  @Test
   @User(
     spendings = {@Spending(
       amount = 90,
@@ -391,14 +362,12 @@ public class SpendingTest {
         description = "Second spending should be displayed"
       )}
   )
-  @Test
+  @ApiLogin
   @DisplayName("Created spendings should be displayed in table and asserted by custom assertion")
   void createdSpendingsShouldBeVisibleInTableAssertedByCustomAssertion(UdUserJson user) {
     var spendings = user.testData().spendings();
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
+    open(MainPage.URL, MainPage.class)
       .checkThatPageLoaded()
       .spendingTableShouldBeLoaded()
       .checkTableContains(spendings.toArray(SpendJson[]::new));

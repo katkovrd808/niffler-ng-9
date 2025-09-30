@@ -19,6 +19,18 @@ public interface UserdataClient {
   @Nonnull
   UdUserJson sendInvitation(String username, String targetUsername);
 
-  @Nullable
+  @Nonnull
   UdUserJson acceptInvitation(String username, String targetUsername);
+
+  @Nonnull
+  List<UdUserJson> findAllFriends(String username, @Nullable String searchQuery);
+
+  @Nonnull
+  List<UdUserJson> findIncomeInvitations(String username);
+
+  @Nonnull
+  List<UdUserJson> findOutcomeInvitations(String username);
+
+  @Nonnull
+  List<UdUserJson> findAllFriends(String username);
 }

@@ -7,6 +7,7 @@ import retrofit2.Call;
 import retrofit2.http.*;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,13 @@ public interface SpendApi {
   Call<SpendJson> getSpendingById(@Path("id") UUID spendingId);
 
   @GET("internal/spends/all")
-  Call<List<SpendJson>> getSpendingList(@Query("filterCurrency")CurrencyValues currency);
+  Call<List<SpendJson>> getSpendingList(@Query("username") String username,
+                                        @Query("currencyValues") CurrencyValues currencyValues,
+                                        @Query("from") Date from,
+                                        @Query("to") Date to);
+
+  @GET("internal/spends/all")
+  Call<List<SpendJson>> getSpendingList(@Query("username") String username);
 
   @DELETE("internal/spends/remove")
   Call<Void> deleteSpendings(@Query("ids") List<UUID> ids);
@@ -34,6 +41,7 @@ public interface SpendApi {
   @PATCH("internal/categories/update")
   Call<CategoryJson> editCategory(@Body CategoryJson category);
 
-  @GET("internal/categories/all")
-  Call<List<CategoryJson>> getCategoriesList();
+  @GET("/internal/categories/all")
+  Call<List<CategoryJson>> getCategoriesList(@Query("username") String username,
+                                             @Query("excludeArchived") Boolean excludeArchived);
 }

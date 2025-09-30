@@ -2,13 +2,14 @@ package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
+import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.service.UsersClient;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.time.StopWatch;
-import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
@@ -92,7 +93,8 @@ public class UsersApiClient extends RestClient implements UsersClient {
   public UdUserJson update(UdUserJson user) {
     final Response<UdUserJson> response;
     try {
-      response = authApi.update(user).execute();
+      response = authApi.update(user)
+        .execute();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -106,7 +108,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
     final List<UdUserJson> result = new ArrayList<>();
     if (count > 0) {
       for (int i = 0; i < count; i++) {
-        final UdUserJson newUser = create(randomUsername(), defaultPassword);
+        final UdUserJson newUser = create(randomUsername(), DEFAULT_PASSWORD);
         result.add(newUser);
         UdUserJson invited = userdataApi.sendInvitation(
           newUser.username(),
@@ -127,15 +129,15 @@ public class UsersApiClient extends RestClient implements UsersClient {
     final List<UdUserJson> result = new ArrayList<>();
     if (count > 0) {
       for (int i = 0; i < count; i++) {
-        final UdUserJson newUser = create(randomUsername(), defaultPassword);
-        result.add(newUser);
+        final UdUserJson user = create(randomUsername(), DEFAULT_PASSWORD);
+        result.add(user);
         userdataApi.sendInvitation(
-          newUser.username(),
+          user.username(),
           targetUser.username()
         );
         UdUserJson friend = userdataApi.acceptInvitation(
-          newUser.username(),
-          targetUser.username()
+          targetUser.username(),
+          user.username()
           );
 
         targetUser.testData()
