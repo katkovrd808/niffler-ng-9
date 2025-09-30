@@ -31,9 +31,9 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public UdUserEntity create(UdUserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO user (username, currency, full_name, firstname, surname, photo, photo_small) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?)",
-        Statement.RETURN_GENERATED_KEYS
+      "INSERT INTO user (username, currency, full_name, firstname, surname, photo, photo_small) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+      Statement.RETURN_GENERATED_KEYS
     )) {
       ps.setString(1, user.getUsername());
       ps.setObject(2, user.getCurrency());
@@ -64,27 +64,27 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public Optional<UdUserEntity> findById(UUID id) {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "SELECT * FROM \"user\" WHERE id = ?"
+      "SELECT * FROM \"user\" WHERE id = ?"
     ); PreparedStatement addresseesPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.addressee_id
+        WHERE f.requester_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.addressee_id
-            WHERE f.requester_id = ?
-            """
     ); PreparedStatement requestersPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.requester_id
+        WHERE f.addressee_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.requester_id
-            WHERE f.addressee_id = ?
-            """
     )) {
       userPs.setObject(1, id);
       userPs.execute();
@@ -109,27 +109,27 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public List<UdUserEntity> findAll() {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "SELECT * FROM \"user\""
+      "SELECT * FROM \"user\""
     ); PreparedStatement addresseesPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.addressee_id
+        WHERE f.requester_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.addressee_id
-            WHERE f.requester_id = ?
-            """
     ); PreparedStatement requestersPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.requester_id
+        WHERE f.addressee_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.requester_id
-            WHERE f.addressee_id = ?
-            """
     )) {
       userPs.execute();
       try (ResultSet userRs = userPs.getResultSet()) {
@@ -154,27 +154,27 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public Optional<UdUserEntity> findByUsername(String username) {
     try (PreparedStatement userPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "SELECT * FROM \"user\" WHERE username = ?"
+      "SELECT * FROM \"user\" WHERE username = ?"
     ); PreparedStatement addresseesPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.addressee_id
+        WHERE f.requester_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.addressee_id
-            WHERE f.requester_id = ?
-            """
     ); PreparedStatement requestersPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+      """
+        SELECT
+        f.status,
+        f.created_date,
+        u.*
+        FROM friendship f
+        JOIN "user" u ON u.id = f.requester_id
+        WHERE f.addressee_id = ?
         """
-            SELECT
-            f.status,
-            f.created_date,
-            u.*
-            FROM friendship f
-            JOIN "user" u ON u.id = f.requester_id
-            WHERE f.addressee_id = ?
-            """
     )) {
       userPs.setObject(1, username);
       userPs.execute();
@@ -198,7 +198,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public void delete(UdUserEntity user) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "DELETE FROM user WHERE id = ?"
+      "DELETE FROM user WHERE id = ?"
     )) {
       ps.setObject(1, user.getId());
       ps.execute();
@@ -211,23 +211,23 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public UdUserEntity update(UdUserEntity user) {
     try (PreparedStatement usersPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-            """
-                  UPDATE "user"
-                    SET currency    = ?,
-                        firstname   = ?,
-                        surname     = ?,
-                        photo       = ?,
-                        photo_small = ?
-                    WHERE id = ?
-                """);
+      """
+          UPDATE "user"
+            SET currency    = ?,
+                firstname   = ?,
+                surname     = ?,
+                photo       = ?,
+                photo_small = ?
+            WHERE id = ?
+        """);
 
          PreparedStatement friendsPs = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                 """
-                     INSERT INTO friendship (requester_id, addressee_id, status)
-                     VALUES (?, ?, ?)
-                     ON CONFLICT (requester_id, addressee_id)
-                         DO UPDATE SET status = ?
-                     """)
+           """
+             INSERT INTO friendship (requester_id, addressee_id, status)
+             VALUES (?, ?, ?)
+             ON CONFLICT (requester_id, addressee_id)
+                 DO UPDATE SET status = ?
+             """)
     ) {
       usersPs.setString(1, user.getCurrency().name());
       usersPs.setString(2, user.getFirstname());
@@ -252,11 +252,118 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     return user;
   }
 
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findFriends(String username) {
+    return findByUsername(username)
+      .map(current -> {
+        final UUID userId = current.getId();
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+          """
+              SELECT DISTINCT u.*
+              FROM "user" u
+              JOIN friendship f
+                ON (u.id = f.addressee_id AND f.requester_id = ?)
+                OR (u.id = f.requester_id AND f.addressee_id = ?)
+              WHERE f.status = ?;
+            """
+        )) {
+          ps.setObject(1, userId);
+          ps.setObject(2, userId);
+          ps.setString(3, ACCEPTED.name());
+          ps.execute();
+
+          List<UdUserEntity> friendsList = new ArrayList<>();
+          try (ResultSet rs = ps.getResultSet()) {
+            while (rs.next()) {
+              UdUserEntity user = UserdataUserEntityRowMapper.instance.mapRow(rs, rs.getRow());
+              friendsList.add(user);
+            }
+          }
+          return friendsList;
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
+      }).orElseGet(ArrayList::new);
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findFriends(String username, String searchQuery) {
+    throw new UnsupportedOperationException("SearchQuery param is not applicable for DB requests!");
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findIncomeInvitations(String username) {
+    return findByUsername(username)
+      .map(current -> {
+        final UUID userId = current.getId();
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+          """
+            SELECT u.*
+            FROM "user" u
+            JOIN friendship f ON u.id = f.requester_id
+            WHERE f.addressee_id = ?
+            AND f.status = ?
+          """
+        )) {
+          ps.setObject(1, userId);
+          ps.setString(2, PENDING.name());
+          ps.execute();
+
+          List<UdUserEntity> income = new ArrayList<>();
+          try (ResultSet rs = ps.getResultSet()) {
+            while (rs.next()) {
+              UdUserEntity user = UserdataUserEntityRowMapper.instance.mapRow(rs, rs.getRow());
+              income.add(user);
+            }
+          }
+          return income;
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
+      }).orElseGet(ArrayList::new);
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findOutcomeInvitations(String username) {
+    return findByUsername(username)
+      .map(current -> {
+        final UUID userId = current.getId();
+        try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
+          """
+            SELECT u.*
+            FROM "user" u
+            JOIN friendship f ON u.id = f.addressee_id
+            WHERE f.requester_id = ?
+            AND f.status = ?
+          """
+        )) {
+          ps.setObject(1, userId);
+          ps.setString(2, PENDING.name());
+          ps.execute();
+
+          List<UdUserEntity> income = new ArrayList<>();
+          try (ResultSet rs = ps.getResultSet()) {
+            while (rs.next()) {
+              UdUserEntity user = UserdataUserEntityRowMapper.instance.mapRow(rs, rs.getRow());
+              income.add(user);
+            }
+          }
+          return income;
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
+      }).orElseGet(ArrayList::new);
+  }
+
   @Override
   public void sendInvitation(UdUserEntity requester, UdUserEntity addressee) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO friendship (addressee_id, requester_id, created_date, status) " +
-            "VALUES (?, ?, ?, ?)"
+      "INSERT INTO friendship (addressee_id, requester_id, created_date, status) " +
+        "VALUES (?, ?, ?, ?)"
     )) {
       ps.setObject(1, addressee.getId());
       ps.setObject(2, requester.getId());
@@ -271,8 +378,8 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
   @Override
   public void addFriend(UdUserEntity requester, UdUserEntity addressee) {
     try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-        "INSERT INTO friendship (addressee_id, requester_id, created_date, status) " +
-            "VALUES (?, ?, ?, ?), (?, ?, ?, ?)"
+      "INSERT INTO friendship (addressee_id, requester_id, created_date, status) " +
+        "VALUES (?, ?, ?, ?), (?, ?, ?, ?)"
     )) {
       ps.setObject(1, addressee.getId());
       ps.setObject(2, requester.getId());

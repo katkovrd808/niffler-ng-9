@@ -2,10 +2,10 @@ package guru.qa.niffler.data.repository.impl.spring;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.userdata.UdUserEntity;
+import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.mapper.userdata.UserdataUserEntityMapRowMapper;
 import guru.qa.niffler.data.mapper.userdata.UserdataUserEntityRowMapper;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
-import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -17,10 +17,14 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.ACCEPTED;
+import static guru.qa.niffler.data.entity.userdata.FriendshipStatus.PENDING;
 
 @ParametersAreNonnullByDefault
 public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository {
@@ -140,6 +144,77 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
         }
       });
     return user;
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findFriends(String username) {
+    return findByUsername(username).map(current -> {
+      final UUID userId = current.getId();
+      JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+      return jdbcTemplate.query(
+        """
+            SELECT DISTINCT u.*
+              FROM "user" u
+              JOIN friendship f
+                ON (u.id = f.addressee_id AND f.requester_id = ?)
+                OR (u.id = f.requester_id AND f.addressee_id = ?)
+              WHERE f.status = ?;
+          """,
+        UserdataUserEntityRowMapper.instance,
+        userId,
+        userId,
+        ACCEPTED.name()
+      );
+    }).orElseGet(ArrayList::new);
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findFriends(String username, String searchQuery) {
+    throw new UnsupportedOperationException("SearchQuery param is not applicable for DB requests!");
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findIncomeInvitations(String username) {
+    return findByUsername(username).map(current -> {
+      final UUID userId = current.getId();
+      JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+      return jdbcTemplate.query(
+        """
+            SELECT u.*
+            FROM "user" u
+            JOIN friendship f ON u.id = f.requester_id
+            WHERE f.addressee_id = ?
+            AND f.status = ?
+          """,
+        UserdataUserEntityRowMapper.instance,
+        userId,
+        PENDING.name()
+      );
+    }).orElseGet(ArrayList::new);
+  }
+
+  @Nonnull
+  @Override
+  public List<UdUserEntity> findOutcomeInvitations(String username) {
+    return findByUsername(username).map(current -> {
+      final UUID userId = current.getId();
+      JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
+      return jdbcTemplate.query(
+        """
+            SELECT u.*
+            FROM "user" u
+            JOIN friendship f ON u.id = f.addressee_id
+            WHERE f.requester_id = ?
+            AND f.status = ?
+          """,
+        UserdataUserEntityRowMapper.instance,
+        userId,
+        PENDING.name()
+      );
+    }).orElseGet(ArrayList::new);
   }
 
   @Override

@@ -25,6 +25,18 @@ public interface UserdataUserRepository {
   @Nonnull
   UdUserEntity update(UdUserEntity user);
 
+  @Nonnull
+  List<UdUserEntity> findFriends(String username);
+
+  @Nonnull
+  List<UdUserEntity> findFriends(String username, String searchQuery);
+
+  @Nonnull
+  List<UdUserEntity> findIncomeInvitations(String username);
+
+  @Nonnull
+  List<UdUserEntity> findOutcomeInvitations(String username);
+
   void sendInvitation(UdUserEntity requester, UdUserEntity addressee);
 
   void addFriend(UdUserEntity requester, UdUserEntity addressee);
