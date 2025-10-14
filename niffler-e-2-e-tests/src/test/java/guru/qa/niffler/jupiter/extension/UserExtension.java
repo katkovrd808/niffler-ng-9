@@ -49,12 +49,12 @@ public class UserExtension implements BeforeEachCallback, AfterTestExecutionCall
 
         if (user.username().equals(userAnno.username())) {
           final boolean hasArchived = Arrays.stream(userAnno.categories()).noneMatch(Category::archived);
-          spendings.addAll(spendClient.findSpendings(user.username()));
+          spendings.addAll(spendClient.findSpendings(user.username(), null, null, null));
           categories.addAll(spendClient.findCategories(user.username(), hasArchived));
 
           incomes.addAll(userdataClient.findIncomeInvitations(user.username()));
           outcomes.addAll(userdataClient.findOutcomeInvitations(user.username()));
-          friends.addAll(userdataClient.findAllFriends(user.username()));
+          friends.addAll(userdataClient.findAllFriends(user.username(), null));
         }
 
         TestData testData = new TestData(

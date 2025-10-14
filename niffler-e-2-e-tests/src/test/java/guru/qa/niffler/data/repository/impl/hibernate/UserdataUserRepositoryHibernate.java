@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
@@ -67,7 +68,7 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
 
   @Nonnull
   @Override
-  public List<UdUserEntity> findFriends(String username) {
+  public List<UdUserEntity> findFriends(String username, @Nullable String searchQuery) {
     return findByUsername(username).map(current -> {
         List<UdUserEntity> friendsAsRequesters = entityManager.createQuery(
             """
@@ -104,26 +105,6 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
         return new ArrayList<>(allFriends);
       }
     ).orElseGet(ArrayList::new);
-  }
-
-  /*SELECT u.*
-  FROM "user" u
-  JOIN friendship f
-  ON u.id = f.addressee_id
-  WHERE f.requester_id = ?
-  AND f.status = ?
-  UNION
-  SELECT u.*
-  FROM "user" u
-  JOIN friendship f
-  ON u.id = f.requester_id
-  WHERE f.addressee_id = ?
-  AND f.status = ?*/
-
-  @Nonnull
-  @Override
-  public List<UdUserEntity> findFriends(String username, String searchQuery) {
-    throw new UnsupportedOperationException("SearchQuery param is not applicable for DB requests!");
   }
 
   @Nonnull
@@ -183,7 +164,6 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
 
   @Override
   public void delete(UdUserEntity user) {
-    entityManager.joinTransaction();
-    entityManager.remove(user);
+    entityManager.remove(entityManager.contains(user) ? user : entityManager.merge(user));
   }
 }

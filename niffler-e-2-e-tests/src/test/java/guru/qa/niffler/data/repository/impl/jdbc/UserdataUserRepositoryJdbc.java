@@ -9,6 +9,7 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.*;
 import java.util.ArrayList;
@@ -254,7 +255,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
 
   @Nonnull
   @Override
-  public List<UdUserEntity> findFriends(String username) {
+  public List<UdUserEntity> findFriends(String username, @Nullable String searchQuery) {
     return findByUsername(username)
       .map(current -> {
         final UUID userId = current.getId();
@@ -285,12 +286,6 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
           throw new RuntimeException(e);
         }
       }).orElseGet(ArrayList::new);
-  }
-
-  @Nonnull
-  @Override
-  public List<UdUserEntity> findFriends(String username, String searchQuery) {
-    throw new UnsupportedOperationException("SearchQuery param is not applicable for DB requests!");
   }
 
   @Nonnull

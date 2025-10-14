@@ -30,8 +30,8 @@ public class FriendsWebTest {
 
   @Test
   @User(
-    username = "test1"
-    //friends = 1
+    username = "test1",
+    friends = 1
   )
   @ApiLogin
   @DisplayName("Friend should be present in friends table")

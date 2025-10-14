@@ -54,7 +54,6 @@ public class AuthAuthorityRepositoryHibernate implements AuthAuthorityRepository
 
     @Override
     public void delete(AuthorityEntity authority) {
-        entityManager.joinTransaction();
-        entityManager.remove(authority);
+        entityManager.remove(entityManager.contains(authority) ? authority : entityManager.merge(authority));
     }
 }

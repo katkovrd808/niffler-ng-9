@@ -45,10 +45,7 @@ public interface SpendClient {
     Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description);
 
     @Nonnull
-    List<SpendJson> findSpendings(String username, CurrencyValues currency, Date from, Date to);
-
-    @Nonnull
-    List<SpendJson> findSpendings(String username);
+    List<SpendJson> findSpendings(String username, @Nullable CurrencyValues currency, @Nullable Date from, @Nullable Date to);
 
     @Nonnull
     CategoryJson editCategory(CategoryJson category);

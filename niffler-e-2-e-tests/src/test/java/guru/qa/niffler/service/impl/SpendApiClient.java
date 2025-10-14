@@ -8,6 +8,7 @@ import guru.qa.niffler.service.SpendClient;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Date;
@@ -78,24 +79,10 @@ public class SpendApiClient extends RestClient implements SpendClient {
 
   @Nonnull
   @Override
-  public List<SpendJson> findSpendings(String username, CurrencyValues currency, Date from, Date to) {
+  public List<SpendJson> findSpendings(String username, @Nullable CurrencyValues currency, @Nullable Date from, @Nullable Date to) {
     final Response<List<SpendJson>> response;
     try {
-      response = spendApi.getSpendingList(username, currency, from, to)
-        .execute();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    assertEquals(200, response.code());
-    return response.body();
-  }
-
-  @Nonnull
-  @Override
-  public List<SpendJson> findSpendings(String username) {
-    final Response<List<SpendJson>> response;
-    try {
-      response = spendApi.getSpendingList(username)
+      response = spendApi.getSpendingList(username, null, null, null)
         .execute();
     } catch (IOException e) {
       throw new RuntimeException(e);

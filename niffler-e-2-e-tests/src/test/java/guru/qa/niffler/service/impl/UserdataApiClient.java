@@ -99,31 +99,10 @@ public class UserdataApiClient extends RestClient implements UserdataClient {
 
   @Nonnull
   @Override
-  public List<UdUserJson> findAllFriends(String username) {
-    final Response<List<UdUserJson>> response;
-    try {
-      response = userdataApi.findFriends(username)
-        .execute();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    assertEquals(200, response.code());
-    List<UdUserJson> users = response.body();
-    if (users != null && !users.isEmpty()) {
-      return users.stream()
-        .filter(
-          u -> Objects.equals(u.friendshipStatus(), FRIEND)
-        ).collect(Collectors.toList());
-    }
-    return new ArrayList<>();
-  }
-
-  @Nonnull
-  @Override
   public List<UdUserJson> findIncomeInvitations(String username) {
     final Response<List<UdUserJson>> response;
     try {
-      response = userdataApi.findFriends(username)
+      response = userdataApi.findFriends(username, null)
         .execute();
     } catch (IOException e) {
       throw new RuntimeException(e);

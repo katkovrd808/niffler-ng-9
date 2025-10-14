@@ -103,17 +103,8 @@ public class SpendDbClient implements SpendClient {
 
   @Nonnull
   @Override
-  public List<SpendJson> findSpendings(String username, CurrencyValues currency, Date from, Date to) {
+  public List<SpendJson> findSpendings(String username, @Nullable CurrencyValues currency, @Nullable Date from, @Nullable Date to) {
     return spendRepository.findAllByUsername(username, currency, from, to)
-      .stream()
-      .map(SpendJson::fromEntity)
-      .collect(Collectors.toList());
-  }
-
-  @Nonnull
-  @Override
-  public List<SpendJson> findSpendings(String username) {
-    return spendRepository.findAllByUsername(username)
       .stream()
       .map(SpendJson::fromEntity)
       .collect(Collectors.toList());

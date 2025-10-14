@@ -72,7 +72,7 @@ public class SpendRepositoryHibernate implements SpendRepository {
     }
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<CategoryEntity> findCategoriesByUsername(String username, boolean excludeArchived) {
     return entityManager.createQuery("select c from CategoryEntity c where c.username =: username and archived =: excludeArchived", CategoryEntity.class)
@@ -89,7 +89,7 @@ public class SpendRepositoryHibernate implements SpendRepository {
     );
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<SpendEntity> findAllByUsername(String username, CurrencyValues currency, Date from, Date to) {
     return entityManager.createQuery("" +
@@ -102,7 +102,7 @@ public class SpendRepositoryHibernate implements SpendRepository {
       .getResultList();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public List<SpendEntity> findAllByUsername(String username) {
     return entityManager.createQuery("" +
@@ -119,6 +119,7 @@ public class SpendRepositoryHibernate implements SpendRepository {
     return category;
   }
 
+  @Nonnull
   @Override
   public Optional<SpendEntity> findByUsernameAndSpendDescription(String username, String description) {
     try {
@@ -135,8 +136,7 @@ public class SpendRepositoryHibernate implements SpendRepository {
 
   @Override
   public void delete(SpendEntity spend) {
-    entityManager.joinTransaction();
-    entityManager.remove(spend);
+    entityManager.remove(entityManager.contains(spend) ? spend : entityManager.merge(spend));
   }
 
   @Override

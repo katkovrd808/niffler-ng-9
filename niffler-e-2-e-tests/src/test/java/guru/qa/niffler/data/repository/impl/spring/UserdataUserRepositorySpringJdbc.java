@@ -12,6 +12,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -148,7 +149,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
 
   @Nonnull
   @Override
-  public List<UdUserEntity> findFriends(String username) {
+  public List<UdUserEntity> findFriends(String username, @Nullable String searchQuery) {
     return findByUsername(username).map(current -> {
       final UUID userId = current.getId();
       JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
@@ -167,12 +168,6 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
         ACCEPTED.name()
       );
     }).orElseGet(ArrayList::new);
-  }
-
-  @Nonnull
-  @Override
-  public List<UdUserEntity> findFriends(String username, String searchQuery) {
-    throw new UnsupportedOperationException("SearchQuery param is not applicable for DB requests!");
   }
 
   @Nonnull

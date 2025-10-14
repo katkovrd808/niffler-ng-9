@@ -8,16 +8,16 @@ import retrofit2.http.*;
 
 public interface AuthApi {
 
-  @GET("/register")
+  @GET("register")
   Call<ResponseBody> requestRegisterForm();
 
-  @POST("/register")
+  @POST("register")
   Call<ResponseBody> register(@Query("username") String username,
                               @Query("password") String password,
                               @Query("passwordSubmit") String passwordSubmit,
                               @Query("_csrf") String token);
 
-  @POST("/update")
+  @POST("update")
   Call<UdUserJson> update(@Body UdUserJson user);
 
   //OAUTH 2.0 Methods
@@ -30,7 +30,7 @@ public interface AuthApi {
                                     @Query(value = "code_challenge_method", encoded = true) String codeChallengeMethod);
 
   @FormUrlEncoded
-  @POST("/login")
+  @POST("login")
   Call<Void> loginOAuth(@Field(value = "_csrf", encoded = true) String csrf,
                                 @Field("username") String username,
                                 @Field("password") String password);

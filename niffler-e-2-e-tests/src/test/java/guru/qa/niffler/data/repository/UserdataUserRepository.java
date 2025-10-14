@@ -3,6 +3,7 @@ package guru.qa.niffler.data.repository;
 import guru.qa.niffler.data.entity.userdata.UdUserEntity;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
@@ -26,10 +27,7 @@ public interface UserdataUserRepository {
   UdUserEntity update(UdUserEntity user);
 
   @Nonnull
-  List<UdUserEntity> findFriends(String username);
-
-  @Nonnull
-  List<UdUserEntity> findFriends(String username, String searchQuery);
+  List<UdUserEntity> findFriends(String username, @Nullable String searchQuery);
 
   @Nonnull
   List<UdUserEntity> findIncomeInvitations(String username);

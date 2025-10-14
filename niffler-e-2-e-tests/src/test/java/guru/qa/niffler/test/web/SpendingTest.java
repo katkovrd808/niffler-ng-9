@@ -68,7 +68,6 @@ public class SpendingTest {
 
   @Test
   @User(
-    username = "test1",
     spendings = @Spending(
       amount = 1000,
       description = "Spending should be deleted"

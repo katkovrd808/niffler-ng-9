@@ -34,7 +34,4 @@ public interface UserdataApi {
   @GET("internal/friends/all")
   Call<List<UdUserJson>> findFriends(@Query("username") String username,
                                      @Nullable @Query("searchQuery") String searchQuery);
-
-  @GET("internal/friends/all")
-  Call<List<UdUserJson>> findFriends(@Query("username") String username);
 }

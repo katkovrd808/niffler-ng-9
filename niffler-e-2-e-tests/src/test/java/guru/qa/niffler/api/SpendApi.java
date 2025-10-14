@@ -6,6 +6,7 @@ import guru.qa.niffler.model.spend.SpendJson;
 import retrofit2.Call;
 import retrofit2.http.*;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Date;
 import java.util.List;
@@ -25,12 +26,9 @@ public interface SpendApi {
 
   @GET("internal/spends/all")
   Call<List<SpendJson>> getSpendingList(@Query("username") String username,
-                                        @Query("currencyValues") CurrencyValues currencyValues,
-                                        @Query("from") Date from,
-                                        @Query("to") Date to);
-
-  @GET("internal/spends/all")
-  Call<List<SpendJson>> getSpendingList(@Query("username") String username);
+                                        @Nullable @Query("currencyValues") CurrencyValues currencyValues,
+                                        @Nullable @Query("from") Date from,
+                                        @Nullable @Query("to") Date to);
 
   @DELETE("internal/spends/remove")
   Call<Void> deleteSpendings(@Query("ids") List<UUID> ids);
@@ -41,7 +39,7 @@ public interface SpendApi {
   @PATCH("internal/categories/update")
   Call<CategoryJson> editCategory(@Body CategoryJson category);
 
-  @GET("/internal/categories/all")
+  @GET("internal/categories/all")
   Call<List<CategoryJson>> getCategoriesList(@Query("username") String username,
                                              @Query("excludeArchived") Boolean excludeArchived);
 }

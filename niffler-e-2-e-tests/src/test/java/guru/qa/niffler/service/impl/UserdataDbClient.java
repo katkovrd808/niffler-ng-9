@@ -62,15 +62,6 @@ public class UserdataDbClient implements UserdataClient {
 
   @Nonnull
   @Override
-  public List<UdUserJson> findAllFriends(String username) {
-    return userdataUserRepository.findFriends(username)
-      .stream()
-      .map(user -> UdUserJson.fromEntity(user, ACCEPTED))
-      .collect(Collectors.toList());
-  }
-
-  @Nonnull
-  @Override
   public List<UdUserJson> findIncomeInvitations(String username) {
     return userdataUserRepository.findIncomeInvitations(username)
       .stream()
