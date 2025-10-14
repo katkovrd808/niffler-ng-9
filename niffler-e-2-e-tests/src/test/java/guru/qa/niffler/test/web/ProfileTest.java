@@ -1,12 +1,8 @@
 package guru.qa.niffler.test.web;
 
-import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.Category;
-import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
-import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
-import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.*;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.ProfilePage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -23,91 +19,72 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 @Tags({@Tag("WEB")})
 @ParametersAreNonnullByDefault
 public class ProfileTest {
-  private static final String FRONT_URL = Config.getInstance().frontUrl();
 
+  @Test
   @User(
     categories = @Category(
       archived = true
     )
   )
-  @Test
+  @ApiLogin
   @DisabledByIssue("3")
   @DisplayName("Archived category should be present in categories list on profile page")
   void archivedCategoryShouldPresentInCategoriesList(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+    open(ProfilePage.URL, ProfilePage.class)
       .showArchivedCategories()
       .checkArchivedCategory(user.testData().categories().getFirst().name());
   }
 
+  @Test
   @User(
     categories = @Category()
   )
-  @Test
+  @ApiLogin
   @DisplayName("Active category should be present in categories list on profile page")
   void activeCategoryShouldPresentInCategoriesList(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+    open(ProfilePage.URL, ProfilePage.class)
       .checkCategory(user.testData().categories().getFirst().name());
   }
 
-  @User
   @Test
+  @User
+  @ApiLogin
   @DisplayName("User should be able to upload profile image")
-  void userShouldBeAbleToUploadProfileImage(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+  void userShouldBeAbleToUploadProfileImage() {
+    open(ProfilePage.URL, ProfilePage.class)
       .uploadProfileImage("img/cat.jpeg");
   }
 
-  @User
   @Test
+  @User
+  @ApiLogin
   @DisplayName("User should be able to change username")
   void userShouldBeNotAbleToChangeUsername(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+    open(ProfilePage.URL, ProfilePage.class)
       .checkUsername(user.username());
   }
 
-  @User
   @Test
+  @User
+  @ApiLogin
   @DisplayName("User should be able to change name")
-  void userShouldBeAbleToChangeName(UdUserJson user) {
+  void userShouldBeAbleToChangeName() {
     final String fullName = randomName();
 
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+    open(ProfilePage.URL, ProfilePage.class)
       .setFullName(fullName)
       .checkFullName(fullName);
   }
 
-  @User
   @ScreenShotTest(
     value = "img/expected/expected-profile.png",
     rewriteExpected = true
   )
+  @User
+  @ApiLogin
   @DisplayName("Profile image should be changed after setting")
-  void checkUserProfileImage(UdUserJson user, BufferedImage expected) throws IOException {
-    open(FRONT_URL, LoginPage.class)
-      .fillLoginPage(user.username(), user.testData().password())
-      .submit()
-      .checkThatPageLoaded()
-      .openProfilePageFromHeader()
+  void checkUserProfileImage(BufferedImage expected) throws IOException {
+    open(ProfilePage.URL, ProfilePage.class)
       .uploadProfileImage("img/cat.png")
       .assertDiff(expected, $("form img"));
   }

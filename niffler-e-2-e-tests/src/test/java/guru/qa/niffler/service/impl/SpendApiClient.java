@@ -1,14 +1,17 @@
 package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.SpendApi;
+import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.spend.CategoryJson;
 import guru.qa.niffler.model.spend.SpendJson;
 import guru.qa.niffler.service.SpendClient;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -74,6 +77,21 @@ public class SpendApiClient extends RestClient implements SpendClient {
     throw new UnsupportedOperationException("Unsupported action with Spend API");
   }
 
+  @Nonnull
+  @Override
+  public List<SpendJson> findSpendings(String username, @Nullable CurrencyValues currency, @Nullable Date from, @Nullable Date to) {
+    final Response<List<SpendJson>> response;
+    try {
+      response = spendApi.getSpendingList(username, null, null, null)
+        .execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
+  @Nonnull
   public CategoryJson editCategory(CategoryJson category) {
     final Response<CategoryJson> response;
     try {
@@ -116,10 +134,10 @@ public class SpendApiClient extends RestClient implements SpendClient {
   }
 
   @Nonnull
-  public Optional<CategoryJson> findCategoryById(UUID id) {
+  public Optional<CategoryJson> findCategoryByUsernameAndId(String username, UUID id) {
     final Response<List<CategoryJson>> response;
     try {
-      response = spendApi.getCategoriesList()
+      response = spendApi.getCategoriesList(username, false)
         .execute();
       assertEquals(200, response.code());
       List<CategoryJson> categories = response.body();
@@ -134,6 +152,21 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
   }
 
+  @Nonnull
+  @Override
+  public List<CategoryJson> findCategories(String username, Boolean excludeArchived) {
+    final Response<List<CategoryJson>> response;
+    try {
+      response = spendApi.getCategoriesList(username, excludeArchived)
+        .execute();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    assertEquals(200, response.code());
+    return response.body();
+  }
+
+  @Nonnull
   public final Optional<CategoryJson> findCategoryByUsernameAndSpendName(String username, String name) {
     throw new UnsupportedOperationException("Unsupported action with Spend API");
   }

@@ -30,8 +30,9 @@ public class AuthApiClient extends RestClient {
     this.authApi = create(AuthApi.class);
   }
 
+
   @Nonnull
-  public String login(String username, String password) throws UnsupportedEncodingException {
+  public String login(String username, String password) {
     final String codeVerifier = generateCodeVerifier();
     final String codeChallenge = generateCodeChallenge(codeVerifier);
     final String token;
@@ -69,6 +70,7 @@ public class AuthApiClient extends RestClient {
     assertEquals(200, response.code());
   }
 
+  @Nonnull
   private String requestTokenOAuth(String codeVerifier) throws IOException {
     final Response<JsonNode> response;
     response = authApi.tokenOAuth(

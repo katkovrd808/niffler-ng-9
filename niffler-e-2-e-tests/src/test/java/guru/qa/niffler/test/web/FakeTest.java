@@ -2,6 +2,9 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
+import guru.qa.niffler.jupiter.annotation.Token;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.service.impl.AuthApiClient;
 import guru.qa.niffler.utils.converter.Browser;
 import guru.qa.niffler.utils.converter.BrowserConverter;
@@ -29,11 +32,9 @@ public class FakeTest {
   }
 
   @Test
-  void oauthTest() throws UnsupportedEncodingException {
-    final String username = "test1";
-    final String password = "secret";
-
-    final String token = authApiClient.login(username, password);
+  @User
+  @ApiLogin
+  void oauthTest(@Token String token) {
     assertNotNull(token);
   }
 }

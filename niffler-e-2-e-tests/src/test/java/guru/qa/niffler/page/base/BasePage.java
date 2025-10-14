@@ -1,6 +1,7 @@
 package guru.qa.niffler.page.base;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.page.element.HeaderElement;
 import guru.qa.niffler.utils.ActualScreenShot;
 import guru.qa.niffler.utils.ScreenDiffResult;
@@ -16,6 +17,8 @@ public class BasePage <T extends BasePage<?>>{
 
   protected final HeaderElement header = new HeaderElement();
   protected final SelenideElement alert = $("#root [role='presentation']");
+
+  protected static final Config CFG = Config.getInstance();
 
   @SuppressWarnings("unchecked")
   @Step("Asserting that alert should have text {text}")

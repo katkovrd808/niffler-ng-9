@@ -3,6 +3,7 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.base.BasePage;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.*;
@@ -17,12 +18,16 @@ public class AllPeoplePage extends BasePage<AllPeoplePage> {
         nextPageBtn = $("#page-next"),
         prevPageBtn = $("#page-prev");
 
+    public final static String URL = CFG.frontUrl() + "people/all";
+
+    @Nonnull
     public AllPeoplePage checkThatPageOpen(){
         pageTab.$$("a").find(href("/people/all")).
                 shouldHave(attribute("aria-selected", "true"));
         return this;
     }
 
+    @Nonnull
     public AllPeoplePage findPeopleWithSearchInput(String username){
         searchInput.val(username).pressEnter();
         peopleTable.$$("td").find(text(username))
@@ -30,6 +35,7 @@ public class AllPeoplePage extends BasePage<AllPeoplePage> {
         return this;
     }
 
+    @Nonnull
     public AllPeoplePage addFriendFromTable(String username){
         searchInput.val(username).pressEnter();
         peopleTable.$$("tr").find(text(username))

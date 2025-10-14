@@ -2,10 +2,12 @@ package guru.qa.niffler.data.repository;
 
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
-import guru.qa.niffler.model.spend.CategoryJson;
+import guru.qa.niffler.model.CurrencyValues;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +30,16 @@ public interface SpendRepository {
     Optional<CategoryEntity> findCategoryByUsernameAndSpendName(String username, String name);
 
     @Nonnull
+    List<CategoryEntity> findCategoriesByUsername(String username, boolean excludeArchived);
+
+    @Nonnull
     Optional<SpendEntity> findById(UUID id);
+
+    @Nonnull
+    List<SpendEntity> findAllByUsername(String username, CurrencyValues currencyValues, Date from, Date to);
+
+    @Nonnull
+    List<SpendEntity> findAllByUsername(String username);
 
     @Nonnull
     CategoryEntity updateCategory(CategoryEntity category);

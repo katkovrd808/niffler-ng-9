@@ -2,13 +2,14 @@ package guru.qa.niffler.service.impl;
 
 import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
+import guru.qa.niffler.model.userdata.TestData;
 import guru.qa.niffler.model.userdata.UdUserJson;
 import guru.qa.niffler.service.UsersClient;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.time.StopWatch;
-import org.jetbrains.annotations.NotNull;
 import retrofit2.Response;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.naming.OperationNotSupportedException;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ParametersAreNonnullByDefault
 public class UsersApiClient extends RestClient implements UsersClient {
 
-  private static final String defaultPassword = "secret";
+  private static final String DEFAULT_PASSWORD = "secret";
 
   private final AuthApi authApi;
   private final UserdataApiClient userdataApi;
@@ -35,7 +36,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
     userdataApi = new UserdataApiClient();
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public UdUserJson create(String username, String password) {
     try {
@@ -52,7 +53,7 @@ public class UsersApiClient extends RestClient implements UsersClient {
       while (sw.getTime(TimeUnit.SECONDS) < 30) {
         UdUserJson userJson = userdataApi.currentUser(username);
         if (userJson != null && userJson.id() != null) {
-          return userJson;
+          return userJson.addTestData(new TestData(DEFAULT_PASSWORD));
         } else {
           try {
             Thread.sleep(100);
@@ -68,30 +69,32 @@ public class UsersApiClient extends RestClient implements UsersClient {
   }
 
   @SneakyThrows
+  @Nonnull
   @Override
   public Optional<UdUserJson> findById(UUID id) {
     throw new OperationNotSupportedException("Operation FIND BY ID is not supported in current API version");
   }
 
   @SneakyThrows
+  @Nonnull
   @Override
   public List<UdUserJson> findAll() {
     throw new OperationNotSupportedException("Operation FIND ALL is not supported in current API version");
   }
 
-  @NotNull
+  @Nonnull
   @Override
   public Optional<UdUserJson> findByUsername(String username) {
     return Optional.ofNullable(userdataApi.currentUser(username));
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public UdUserJson update(UdUserJson user) {
     final Response<UdUserJson> response;
     try {
-      response = authApi.update(user).execute();
+      response = authApi.update(user)
+        .execute();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -99,14 +102,13 @@ public class UsersApiClient extends RestClient implements UsersClient {
     return response.body();
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public List<UdUserJson> addInvitation(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
     if (count > 0) {
       for (int i = 0; i < count; i++) {
-        final UdUserJson newUser = create(randomUsername(), defaultPassword);
+        final UdUserJson newUser = create(randomUsername(), DEFAULT_PASSWORD);
         result.add(newUser);
         UdUserJson invited = userdataApi.sendInvitation(
           newUser.username(),
@@ -121,22 +123,21 @@ public class UsersApiClient extends RestClient implements UsersClient {
     return result;
   }
 
-  //CHECK METHOD WHEN TEST WILL BE WRITTEN
-  @NotNull
+  @Nonnull
   @Override
   public List<UdUserJson> addFriend(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
     if (count > 0) {
       for (int i = 0; i < count; i++) {
-        final UdUserJson newUser = create(randomUsername(), defaultPassword);
-        result.add(newUser);
+        final UdUserJson user = create(randomUsername(), DEFAULT_PASSWORD);
+        result.add(user);
         userdataApi.sendInvitation(
-          newUser.username(),
+          user.username(),
           targetUser.username()
         );
         UdUserJson friend = userdataApi.acceptInvitation(
-          newUser.username(),
-          targetUser.username()
+          targetUser.username(),
+          user.username()
           );
 
         targetUser.testData()

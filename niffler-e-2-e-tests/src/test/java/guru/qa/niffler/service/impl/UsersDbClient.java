@@ -17,6 +17,7 @@ import guru.qa.niffler.service.UsersClient;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 
@@ -36,6 +37,7 @@ public class UsersDbClient implements UsersClient {
     CFG.userdataJdbcUrl()
   );
 
+  @Nonnull
   @Override
   public UdUserJson create(String username, String password) {
     return xaTransactionTemplate.execute(() -> {
@@ -49,12 +51,14 @@ public class UsersDbClient implements UsersClient {
     );
   }
 
+  @Nonnull
   @Override
   public Optional<UdUserJson> findById(UUID id) {
     return userdataUserRepository.findById(id)
       .map(user -> UdUserJson.fromEntity(user, null));
   }
 
+  @Nonnull
   @Override
   public List<UdUserJson> findAll() {
     List<UdUserEntity> userEntities = userdataUserRepository.findAll();
@@ -63,18 +67,21 @@ public class UsersDbClient implements UsersClient {
       .toList();
   }
 
+  @Nonnull
   @Override
   public Optional<UdUserJson> findByUsername(String username) {
     return userdataUserRepository.findByUsername(username)
       .map(user -> UdUserJson.fromEntity(user, null));
   }
 
+  @Nonnull
   @Override
   public UdUserJson update(UdUserJson user) {
     UdUserEntity ue = UdUserEntity.fromJson(user);
     return UdUserJson.fromEntity(userdataUserRepository.update(ue), null);
   }
 
+  @Nonnull
   @Override
   public List<UdUserJson> addInvitation(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
@@ -102,6 +109,7 @@ public class UsersDbClient implements UsersClient {
     return result;
   }
 
+  @Nonnull
   @Override
   public List<UdUserJson> addFriend(UdUserJson targetUser, int count) {
     final List<UdUserJson> result = new ArrayList<>();
@@ -128,6 +136,7 @@ public class UsersDbClient implements UsersClient {
     return result;
   }
 
+  @Nonnull
   @Override
   public void delete(UdUserJson user) {
     xaTransactionTemplate.execute(() -> {
@@ -137,6 +146,7 @@ public class UsersDbClient implements UsersClient {
     );
   }
 
+  @Nonnull
   private UdUserEntity userEntity(String username) {
     UdUserEntity ue = new UdUserEntity();
     ue.setUsername(username);
@@ -144,6 +154,7 @@ public class UsersDbClient implements UsersClient {
     return ue;
   }
 
+  @Nonnull
   private AuthUserEntity authUserEntity(String username, String password) {
     AuthUserEntity authUser = new AuthUserEntity();
     authUser.setUsername(username);

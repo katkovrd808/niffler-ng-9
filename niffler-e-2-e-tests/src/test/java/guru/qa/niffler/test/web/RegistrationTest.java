@@ -1,10 +1,9 @@
 package guru.qa.niffler.test.web;
 
 import com.github.javafaker.Faker;
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.userdata.UdUserJson;
-import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.RegistrationPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -18,7 +17,6 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 @Tags({@Tag("WEB")})
 @ParametersAreNonnullByDefault
 public class RegistrationTest {
-  private static final String FRONT_URL = Config.getInstance().frontUrl();
   private final Faker faker = new Faker();
 
   @Test
@@ -26,8 +24,7 @@ public class RegistrationTest {
   void userWithUniqueUsernameAndValidPasswordShouldBeRegistered() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername(), password, password)
       .submitRegistration()
       .checkSucceedRegistrationPageTitle();
@@ -38,8 +35,7 @@ public class RegistrationTest {
   void userWithUpperCaseUsernameShouldBeRegistered() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername().toUpperCase(), password, password)
       .submitRegistration()
       .checkSucceedRegistrationPageTitle();
@@ -50,8 +46,7 @@ public class RegistrationTest {
   void userUsernameContainsDigitsShouldBeRegistered() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername() + "1", password, password)
       .submitRegistration()
       .checkSucceedRegistrationPageTitle();
@@ -63,8 +58,7 @@ public class RegistrationTest {
     final String username = randomUsername();
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(username, password, password)
       .submitRegistration()
       .checkSucceedRegistrationPageTitle()
@@ -78,8 +72,7 @@ public class RegistrationTest {
   @Test
   @DisplayName("User with taken username should be not registered")
   void userShouldBeNotRegisteredIfUsernameAlreadyTaken(UdUserJson user) {
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(user.username(), "12345", "12345")
       .completeRegistrationAndCheckFormError(String.format("Username `%s` already exists"
         , user.username()));
@@ -90,8 +83,7 @@ public class RegistrationTest {
   void userShouldBeNotRegisteredIfUsernameIsShort() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm("us", password, password)
       .submitRegistrationAndCheckUsernameError("Allowed username length should be from 3 to 50 characters");
   }
@@ -103,8 +95,7 @@ public class RegistrationTest {
       .replaceAll("\\s", "");
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(username, password, password)
       .submitRegistrationAndCheckUsernameError("Allowed username length should be from 3 to 50 characters");
   }
@@ -114,8 +105,7 @@ public class RegistrationTest {
   void userShouldBeNotRegisteredIfUsernameIsBlank() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm("     ", password, password)
       .submitRegistrationAndCheckUsernameError("Username can not be blank");
   }
@@ -126,8 +116,7 @@ public class RegistrationTest {
     final String username = "test username";
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(username, password, password)
       .submitRegistrationAndCheckUsernameError("Username must not contain whitespaces");
   }
@@ -137,8 +126,7 @@ public class RegistrationTest {
   void errorShouldBeShownWhenPasswordsDontMatch() {
     final String password = "12345";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername(), password, password + "1")
       .submitRegistrationAndCheckPasswordError("Passwords should be equal");
   }
@@ -148,8 +136,7 @@ public class RegistrationTest {
   void errorShouldBeShownWhenPasswordTooShort() {
     final String password = "12";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername(), password, password)
       .submitRegistrationAndCheckPasswordError("Allowed password length should be from 3 to 12 characters");
   }
@@ -159,8 +146,7 @@ public class RegistrationTest {
   void errorShouldBeShownWhenPasswordTooLong() {
     final String password = "1234567890123";
 
-    open(FRONT_URL, LoginPage.class)
-      .openRegistrationForm()
+    open(RegistrationPage.URL, RegistrationPage.class)
       .fillRegistrationForm(randomUsername(), password, password)
       .submitRegistrationAndCheckPasswordError("Allowed password length should be from 3 to 12 characters");
   }

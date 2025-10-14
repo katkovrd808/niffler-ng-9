@@ -4,16 +4,18 @@ import lombok.SneakyThrows;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 @ParametersAreNonnullByDefault
 public class OAuthUtils {
+
+  private static SecureRandom secureRandom = new SecureRandom();
+
   @Nonnull
   public static String generateCodeVerifier() {
-    SecureRandom secureRandom = new SecureRandom();
     byte[] codeVerifierBytes = new byte[32];
     secureRandom.nextBytes(codeVerifierBytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(codeVerifierBytes);
@@ -21,8 +23,8 @@ public class OAuthUtils {
 
   @SneakyThrows
   @Nonnull
-  public static String generateCodeChallenge(String codeVerifier) throws UnsupportedEncodingException {
-    byte[] bytes = codeVerifier.getBytes("US-ASCII");
+  public static String generateCodeChallenge(String codeVerifier) {
+    byte[] bytes = codeVerifier.getBytes(StandardCharsets.US_ASCII);
     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
     messageDigest.update(bytes, 0, bytes.length);
     byte[] digest = messageDigest.digest();
